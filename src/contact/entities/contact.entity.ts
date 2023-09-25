@@ -6,7 +6,7 @@ export class Contact extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ length: 30 })
+    @Column({ name: 'customer_name', length: 30 })
     name: string;
 
     @Column({ name: 'phone_number', length: 12 })

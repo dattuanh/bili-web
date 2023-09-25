@@ -14,8 +14,8 @@ import { UtilsModule } from '../utils/utils.module';
 import { AuthAdminController } from './controllers/admin/auth.admin.controller';
 import { ProfileAdminController } from './controllers/admin/profile.admin.controller';
 import { AdminRepository } from './repositories/admin.repository';
-import { UserGroupToUserRepository } from './repositories/user-group-to-user.repository';
-import { UserGroupRepository } from './repositories/user-group.repository';
+// import { UserGroupToUserRepository } from './repositories/user-group-to-user.repository';
+// import { UserGroupRepository } from './repositories/user-group.repository';
 import { UserRepository } from './repositories/user.repository';
 import { AuthAdminService } from './services/admin/auth.admin.service';
 import { ProfileAdminService } from './services/admin/profile.admin.service';
@@ -41,8 +41,8 @@ import { AuthenExternalStrategy } from './strategies/jwt-authen.external.strateg
     TypeOrmCustomModule.forFeature([
       UserRepository,
       AdminRepository,
-      UserGroupToUserRepository,
-      UserGroupRepository,
+      // UserGroupToUserRepository,
+      // UserGroupRepository,
       FileRepository,
     ]),
     UtilsModule,

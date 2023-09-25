@@ -45,7 +45,7 @@ export class NewsAdminService {
     const news = this.newsRepo.create({
       title: title,
       status: status,
-      ownerId: user.admin.userId,
+      ownerId: user.id,
     });
 
     await this.newsRepo.save(news);

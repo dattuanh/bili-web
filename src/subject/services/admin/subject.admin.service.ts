@@ -164,7 +164,7 @@ export class SubjectAdminService {
 
     for (const id of ids) {
       const subject = await this.subjectRepo.findOneOrThrowNotFoundExc({
-        where: { id}, //owner: { id: AdminUserId } },
+        where: { id }, //owner: { id: AdminUserId } },
       });
       const canBeDeleted = await this.checkSubjectCanBeDeleted(id);
 

@@ -11,8 +11,8 @@ import { News } from '../../news/entities/news.entity';
 import { Subject } from '../../subject/entities/subject.entity';
 import { UserType } from '../enums/user.enum';
 import { Admin } from './admin.entity';
-import { UserGroupToUser } from './user-group-to-user.entity';
-import { UserGroup } from './user-group.entity';
+// import { UserGroupToUser } from './user-group-to-user.entity';
+// import { UserGroup } from './user-group.entity';
 
 @Entity({ name: 'user' })
 export class User extends BaseEntity {
@@ -28,15 +28,15 @@ export class User extends BaseEntity {
   @OneToMany(() => File, (file) => file.uploader, { persistence: false })
   files: File[];
 
-  @OneToMany(() => UserGroupToUser, (userGroupToUse) => userGroupToUse.user, {
-    persistence: false,
-  })
-  userGroupToUsers: UserGroupToUser[];
+  // @OneToMany(() => UserGroupToUser, (userGroupToUse) => userGroupToUse.user, {
+  //   persistence: false,
+  // })
+  // userGroupToUsers: UserGroupToUser[];
 
-  @OneToMany(() => UserGroup, (userGroup) => userGroup.owner, {
-    persistence: false,
-  })
-  userGroups: UserGroup[];
+  // @OneToMany(() => UserGroup, (userGroup) => userGroup.owner, {
+  //   persistence: false,
+  // })
+  // userGroups: UserGroup[];
 
   @OneToMany(() => News, (n) => n.owner, { persistence: false })
   news: News[];
