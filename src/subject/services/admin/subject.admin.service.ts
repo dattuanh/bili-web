@@ -180,9 +180,7 @@ export class SubjectAdminService {
 
     const { affected } = await this.subjectRepo.softDelete({
       id: In(ids),
-      //ownerId: AdminUserId,
     });
-
     if (affected !== ids.length)
       throw new NotFoundExc({ message: 'common.exc.notFound' });
   }
