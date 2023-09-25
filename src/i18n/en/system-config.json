@@ -1,0 +1,55 @@
+{
+  "common": {
+    "systemConfigNotFound": "System Config Not Found",
+    "invalidTitle": "Title format is invalid",
+    "invalidStatus": "Status format is invalid",
+    "invalidLink": "Link format is invalid",
+    "invalidDesc": "Description format is invalid",
+    "invalidImage": "Image URL format is invalid",
+    "invalidImageId": "Image ID format is invalid",
+    "invalidId": "ID format is invalid",
+    "invalidStartDate": "Start date format is invalid",
+    "invalidEndDate": "End date format is invalid",
+    "invalidName": "Name format is invalid",
+    "invalidMaxLength": "Max length is invalid",
+    "invalidOrdinal": "Ordinal is invalid"
+  },
+
+  "popupConfig": {
+    "popupConfigNotFound": "Popup Config Not Found",
+    "popupConfigItemNotFound": "Popup Config Item Not Found",
+    "popupConfigOrdinalAlready": "Popup config ordinal item is already"
+  },
+
+  "featureConfig": {
+    "featureConfigNotFound": "Feature Config Not Found",
+    "featureConfigItemNotFound": "Feature Config Item Not Found"
+  },
+
+  "ruleConfig": {
+    "ruleConfigNotFound": "Rule Config Not Found",
+    "ruleConfigItemNotFound": "Rule Config Item Not Found"
+  },
+
+  "eventConfig": {
+    "eventConfigNotFound": "Event Config Not Found",
+    "eventConfigItemNotFound": "Event Config Item Not Found"
+  },
+
+  "homeConfig": {
+    "common": {
+      "invalidData": "Data format is invalid",
+      "homeConfigNotFound": "Home Config Not Found"
+    }
+  },
+  "shareAppConfig": {
+    "common": {
+      "invalidData": "Data format is invalid",
+      "shareAppConfigNotFound": "Share App Config Not Found"
+    }
+  },
+
+  "appPolicy": {
+    "reachLimitAppPolicyAmount": "Đã đạt đến giới hạn số lượng chính sách"
+  }
+}

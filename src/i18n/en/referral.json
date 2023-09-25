@@ -1,0 +1,18 @@
+{
+  "referrerNotFound": "Không tìm thấy cửa hàng",
+  "referrerExisted": "Cửa hàng đã tồn tại",
+  "invalidFrom": "Trường from không hợp lệ",
+  "invalidTo": "Trường to không hợp lệ",
+  "invalidName": "Trường name không hợp lệ",
+  "invalidPhoneNumber": "Trường phone number không hợp lệ",
+  "invalidCode": "Trường code không hợp lệ",
+  "invalidAddress": "Trường address không hợp lệ",
+  "invalidStatus": "Trường status không hợp lệ",
+  "invalidReferralCode": "Mã giới thiệu không hợp lệ",
+  "invalidId": "Trường id không hợp lệ",
+  "fileTypeInvalid": "Loại file không hợp lệ",
+  "referralYourSelf": "Bạn không thể giới thiệu chính mình",
+  "conflictCodeOrReferral": "Trùng mã cửa hàng hoặc mã giới thiệu",
+  "featureIsTurnOff": "Survey Feature is turn off",
+  "referrerHadInvitedUser": "Cửa hàng đã giới thiệu khách hàng, không được phép xoá"
+}

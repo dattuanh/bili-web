@@ -1,0 +1,56 @@
+{
+  "common": {
+    "systemConfigNotFound": "Không tìm thấy cài đặt hệ thống",
+    "invalidTitle": "Định dạng chủ để không hợp lệ",
+    "invalidStatus": "Định dạng trạng thái không hợp lệ",
+    "invalidLink": "Định dạng đường dẫn không hợp lệ",
+    "invalidDesc": "Định dạng mô tả không hợp lệ",
+    "invalidImage": "Định dạng đường dẫn ảnh không hợp lệ",
+    "invalidImageId": "Định dạng id ảnh không hợp lệ",
+    "invalidId": "Định dạng id không hợp lệ",
+    "invalidStartDate": "Định dạng ngày bắt đầu không hợp lệ",
+    "invalidEndDate": "Định dạng ngày kết thúc không hợp lệ",
+    "invalidName": "Định dạng tên không hợp lệ",
+    "invalidMaxLength": "Định dạng độ dài tối đa không hợp lệ",
+    "invalidOrdinal": "Định dạng thứ tự item không hợp lệ"
+  },
+
+  "popupConfig": {
+    "popupConfigNotFound": "Không tìm thấy cài đặt popup",
+    "popupConfigItemNotFound": "Không tìm thấy mục cài đặt popup",
+    "popupConfigOrdinalAlready": "Đã tồn tại thứ tự sặp xếp của mục cài đặt popup"
+  },
+
+  "featureConfig": {
+    "featureConfigNotFound": "Không tìm thấy cài đặt tính năng",
+    "popupConfigItemNotFound": "Không tìm thấy mục cài đặt tính năng"
+  },
+
+  "ruleConfig": {
+    "ruleConfigNotFound": "Không tìm thấy cài đặt quy định",
+    "ruleConfigItemNotFound": "Không tìm thấy mục cài đặt quy định"
+  },
+
+  "eventConfig": {
+    "eventConfigNotFound": "Không tìm thấy cài đặt sự kiện",
+    "eventConfigItemNotFound": "Không tìm thấy mục cài đặt sự kiện"
+  },
+
+  "homeConfig": {
+    "common": {
+      "invalidData": "Định dạng dữ liệu không hợp lệ",
+      "homeConfigNotFound": "Không tìm thấy cài đặt màn hình chính"
+    }
+  },
+
+  "shareAppConfig": {
+    "common": {
+      "invalidData": "Định dạng dữ liệu không hợp lệ",
+      "shareAppConfigNotFound": "Không tìm thấy cài đặt màn hình chia sẻ"
+    }
+  },
+
+  "appPolicy": {
+    "reachLimitAppPolicyAmount": "Đã đạt đến giới hạn số lượng chính sách"
+  }
+}

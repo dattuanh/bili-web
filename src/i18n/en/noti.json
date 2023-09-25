@@ -1,0 +1,22 @@
+{
+  "common": {
+    "notiNotFound": "Noti not found",
+    "deleteMultipleError": "Delete multiple error",
+    "featureIsTurnOff": "Notification Feature is turn off"
+  },
+  "canNotDeleteNotiSent": "Không thể xoá thông báo đã gửi",
+
+  "notiConditionConflict": "Điều kiện thông báo đã tồn tại",
+  "notiOperatorConflict": "Điều kiện thông báo đã tồn tại",
+  "cannotDeleteInUseNotiDisplayTemplate": "Không thể xoá noti template đang được sử dụng. NotiTemplateId = {ids}",
+  "cannotDeleteOtherNotiDisplayTemplate": "Không thể xoá noti template không phải của bạn. NotiTemplateId = {ids}",
+  "cannotDeleteInUseNotiCampaignConfigRule": "Không thể xoá quy định cài đặt chiến dịch thông báo đang được sử dụng. NotiCampaignConfigRuleIds = {ids}",
+  "cannotDeleteDefaultNotiDisplayTemplate": "Không thể xoá template thông báo mặc định",
+  "cannotDeleteInUseNotiTemplate": "Không thể xoá template thông báo đang sử dụng",
+  "invalidNotiConfigValueData": "Giá trị cài đặt chiến dịch thông báo không hợp lệ",
+  "znsParamValidationFailed": "Giá trị tham số zns không hợp lệ",
+  "cannotDeleteNotiCampaignConditionInUsed": "Không thể xoá notiCampaignCondition đang được sử dụng. Danh sách id đang được sử dụng: {inUsedIds}",
+  "cannotDeleteNotiCampaignOperatorInUsed": "Không thể xoá notiCampaignOperator đang được sử dụng. Danh sách id đang được sử dụng: {inUsedIds}",
+  "cannotDeleteZnsTemplateInUsed": "Không thể xoá znsTemplate đang được sử dụng. Danh sách id đang được sử dụng: {inUsedIds}",
+  "merchantNotConfigBrandNameCannotUseZns": "Khách hàng chưa cài đặt tên thương hiệu không thể sử dụng thông báo zns"
+}

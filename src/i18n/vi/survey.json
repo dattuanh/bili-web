@@ -1,0 +1,9 @@
+{
+  "notFound": "Không tìm thấy khảo sát",
+  "simpleQuestionOnlyAcceptOneAnswer": "Câu hỏi đơn giản chỉ nhận 1 đáp án",
+  "notAnswerEnoughQuestion": "Không trả lời đủ câu hỏi",
+  "surveyIsAlreadyTaken": "Đã trả lời survey rồi",
+  "featureIsTurnOff": "Tính năng khảo đã bị đóng",
+  "answerNotFound": "Không tìm thấy câu trả lời",
+  "canNotUpdateSurveyPointIfAlreadyTaken": "Không thể cập nhật điểm khảo sát nếu đã có người tham gia"
+}

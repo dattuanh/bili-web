@@ -1,0 +1,12 @@
+{
+  "expiredOrInactive": "Mã này đã hết hạn hoặc không còn hoạt động.",
+  "invalidExpiredDate": "Ngày hết hạn không hợp lệ.",
+  "codeGroupExisted": "Nhóm mã đã tồn tại.",
+  "productGiftNotEnough": "Số lượng sản phẩm quà tặng không đủ.",
+  "canNotModifyHaveBeenUsed": "Không thể chỉnh sửa hoặc xoá mã đã được sử dụng.",
+  "invalidProduct": "Sản phẩm không hợp lệ",
+  "invalidProductVariant": "Biến thể sản phẩm không hợp lệ",
+  "codeGroupIsBeingGeneratedOrExpired": "Nhóm mã đang được tạo hoặc đã quá hạn",
+  "canNotDecreaseCodeGroupQuantity": "Không thể giảm số lượng của nhóm mã",
+  "gamePlayTimeExpiredDateLessThanCodeGroupExpiredDate": "Ngày hết hạn lượt chơi không được nhỏ hơn ngày hết hạn nhóm mã"
+}

@@ -1,0 +1,6 @@
+{
+  "overNumberCodeInMonth": "Vượt số lượng mã được tạo trong tháng.",
+  "fileNotDownloaded": "chưa thể tải file.",
+  "systemConflict": "Không thể xoá/cập nhật vì có mã code",
+  "unBLockScanCodeDupConflict": "Không thể chỉnh sửa vì đã quét thành công."
+}

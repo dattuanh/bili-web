@@ -1,0 +1,45 @@
+export enum Action {
+  MANAGE = 'manage',
+  CREATE = 'create',
+  READ = 'read',
+  UPDATE = 'update',
+  DELETE = 'delete',
+}
+
+export enum Resource {
+  ALL = 'all',
+  ADMIN = 'admin',
+  MERCHANT = 'merchant',
+  CUSTOMER = 'customer',
+  GROUP_POLICY = 'group_policy',
+  EVENT = 'event',
+  PRODUCT = 'product',
+  CRON_JOB = 'cron_job',
+  AGENT = 'agent',
+  CART = 'cart',
+  ORDER = 'order',
+  CATEGORY = 'category',
+  TAG = 'tag',
+  SURVEY = 'survey',
+  SYSTEM_CONFIG = 'system_config',
+  SECRET = 'secret',
+  EXPORT = 'export',
+  TIER_CONFIG = 'tier_config',
+  GAME = 'game',
+  REFERRAL = 'referral',
+  IMPORT = 'import',
+  STORE = 'store',
+  FEEDBACK_ANSWER = 'feedback_answer',
+  STATISTIC = 'statistic',
+  SUBJECT = 'subject',
+  NEWS = 'news',
+  NOTI = 'noti',
+  PROVINCE = 'province',
+  USER_CREDIT_HISTORY = 'user_credit_history',
+  LOYALTY_CODE = 'loyalty_code',
+}
+
+export enum ActionAbility {
+  CAN = 'can',
+  CANNOT = 'cannot',
+}

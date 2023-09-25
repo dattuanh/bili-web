@@ -1,0 +1,13 @@
+{
+  "branchNameLinter": {
+    "regex": "^(feat|fix|hotfix)\\\/\\#\\d+-[a-z-]+",
+    "disallowed": ["stage", "prod"],
+    "prefixes": [
+      "feat",
+      "fix",
+      "hotfix"
+    ],
+    "msgDoesNotMatchRegex": "Branch \"%s\" does not match the allowed pattern: \"%s\"",
+    "msgBranchDisallowed": "Pushing to \"%s\" is not allowed, use git-flow."
+  }
+}

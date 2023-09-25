@@ -1,0 +1,6 @@
+{
+  "invalidEventGift": "Quà sự kiện không hợp lệ, hãy chắc chắn tổng tỉ lệ trúng giải là 100% và trùng gift_id",
+  "deleteMultipleError": "Xoá nhiều sự kiện thất bại",
+  "notFound": "Không tìm thấy sự kiện",
+  "invalidSystemConfigPoint": "System config point không hợp lệ"
+}

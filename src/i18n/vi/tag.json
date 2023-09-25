@@ -1,0 +1,7 @@
+{
+  "cannotBeDeleted": "Sản phẩm không thể bị xoá",
+  "attachedTagCannotBeUpdated": "Tag không thể sửa do đã được gán mác",
+  "tagIds": "Trường danh sách thẻ không hợp lệ",
+  "invalidTagType": "Trường danh sách thẻ không hợp lệ",
+  "typeCannotBeUpdated": "Trường kiểu tag không thể sửa do tag đã được gán mác"
+}

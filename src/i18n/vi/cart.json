@@ -1,0 +1,7 @@
+{
+  "invalidProduct": "Sản phẩm không hợp lệ",
+  "productVariantIsNotBelongToOneProduct": "Biến thể sản phẩm không phải cùng một sản phẩm",
+  "productOutOfStock": "Sản phẩm hết hàng",
+  "invalidProductToVariantIds": "Danh sách id biến thể sản phẩm không hợp lệ",
+  "productToVariantsNotBelongsToOneProduct": "Danh sách id biến thể sản phẩm không thuộc 1 sản phẩm"
+}

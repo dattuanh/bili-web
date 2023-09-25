@@ -1,0 +1,20 @@
+{
+  "common": {
+    "termsPolicyNotFound": "Điều lệ điều khoản không tồn tại",
+    "termsPolicyVariantNotFound": "Biến thể điều lệ điều khoản  không tồn tại",
+    "termsPolicyAttributeNotFound": "Thuộc tính điều lệ điều khoản không tồn tại",
+    "termsPolicyThumbnailNotFound": "Hình nhỏ điều lệ điều khoản không tồn tại",
+    "externalTermsPolicyNotFound": "Điều lệ điều khoản bên thứ 3 không hợp lệ",
+    "deleteMultipleError": "Danh sách id không hợp lệ"
+  },
+  "validationError": {
+    "id": "Trường id không hợp lệ",
+    "name": "Trường tên không hợp lệ",
+    "lang": "Trường ngôn ngữ không hợp lệ",
+    "content": "Trường mô tả không hợp lệ",
+    "type": "Trường loại không hợp lệ",
+    "status": "Trường trạng thái không hợp lệ",
+     "termsPolicyDetails": "Trường danh sách chi tiết điều lệ điều khoản không hợp lệ"
+  }
+  
+}

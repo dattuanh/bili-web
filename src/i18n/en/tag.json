@@ -1,0 +1,7 @@
+{
+  "cannotBeDeleted": "cannotBeDeleted",
+  "attachedTagCannotBeUpdated": "attachedTagCannotBeUpdated",
+  "tagIds": "one of tag ids is invalid",
+  "invalidTagType": "invalid Tag Type",
+  "typeCannotBeUpdated": "typeCannotBeUpdated"
+}

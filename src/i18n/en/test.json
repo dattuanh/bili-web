@@ -1,0 +1,4 @@
+{
+  "plain": "this is plain text",
+  "params": "this is param text: {argument}"
+}
