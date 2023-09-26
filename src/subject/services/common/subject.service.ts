@@ -9,7 +9,6 @@ import { GetListNewsBySubjectReqDto, GetListSubjectReqDto } from '../../dtos/com
 import { Subject } from '../../entities/subject.entity';
 import { SubjectDetailRepository } from '../../repositories/subject-detail.repository';
 import { SubjectRepository } from '../../repositories/subject.repository';
-import { link } from 'joi';
 import { NewsResDto } from '../../../news/dtos/common/res/news.admin.res.dto';
 
 @Injectable()

@@ -34,7 +34,6 @@ export class NewsAdminController {
 
   @Get(':id')
   getOne(
-    //@CurrentAuthData() user: User,
     @Param('id', ParseIntPipe) id: number
   ) {
     return this.newsMerchantService.getOne(id);
@@ -51,7 +50,6 @@ export class NewsAdminController {
   @Get()
   @PaginationResponse(NewsResDto)
   getList(
-    //@CurrentAuthData() user: User,
     @Query() query: GetListNewsAdminReqDto,
   ) {
     return this.newsMerchantService.getAll(query);
@@ -59,7 +57,6 @@ export class NewsAdminController {
 
   @Delete(':id')
   delete(
-    //@CurrentAuthData() user: User,
     @Param('id', ParseIntPipe) id: number
   ) {
     return this.newsMerchantService.deleteSingle(Number(id));
@@ -67,7 +64,6 @@ export class NewsAdminController {
 
   @Delete()
   deleteSubjects(
-    //@CurrentAuthData() user: User,
     @Body() body: DeleteMultipleNewsAdminReqDto,
   ) {
     return this.newsMerchantService.deleteMultiples(body);
@@ -75,7 +71,6 @@ export class NewsAdminController {
 
   @Put()
   update(
-    //@CurrentAuthData() user: User,
     @Body() body: UpdateNewsAdminReqDto,
   ) {
     return this.newsMerchantService.update(body);

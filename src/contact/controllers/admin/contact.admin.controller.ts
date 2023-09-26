@@ -21,7 +21,7 @@ export class ContactAdminController {
     }
 
     @Get(':id')
-    findOne(@Param('id') id: string) {
+    findOne(@Param('id', ParseIntPipe) id: string) {
         return this.contactService.getOne(+id);
     }
 

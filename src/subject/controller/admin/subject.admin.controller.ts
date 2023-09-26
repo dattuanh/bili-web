@@ -32,7 +32,7 @@ import { SubjectAdminService } from '../../services/admin/subject.admin.service'
 export class SubjectAdminController {
   constructor(
     private readonly subjectAdminService: SubjectAdminService,
-  ) {}
+  ) { }
 
   @Get()
   @PaginationResponse(SubjectResDto)
@@ -43,7 +43,9 @@ export class SubjectAdminController {
   }
 
   @Get(':id')
-  getOne(@CurrentAuthData() user: User, @Param('id', ParseIntPipe) id: number) {
+  getOne(
+    @Param('id', ParseIntPipe) id: number
+  ) {
     return this.subjectAdminService.getOne(id);
   }
 

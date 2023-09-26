@@ -37,7 +37,6 @@ export class SubjectDetailAdminService {
         if (isExisted) {
           throw new ConflictExc({ message: 'subject.isExisted' });
         }
-
         return this.subjectDetailRepo.create({
           ...createSubjectDetailReqDto,
           subjectId,

@@ -83,7 +83,7 @@ export class NewsAdminService {
 
   async getOne(id: number) {
     const news = await this.newsRepo.findOneOrThrowNotFoundExc({
-      where: { id: id }, //owner: { id: user.id } },
+      where: { id: id }, 
       relations: {
         newsDetails: true,
         newsToFile: { thumbnail: true },
@@ -183,7 +183,6 @@ export class NewsAdminService {
     });
     const { affected } = await this.newsRepo.softDelete({
       id,
-      //ownerId: AdminUserId,
     });
 
     if (!affected) throw new NotFoundExc({ message: 'common.exc.notFound' });
@@ -215,7 +214,6 @@ export class NewsAdminService {
 
     const { affected } = await this.newsRepo.softDelete({
       id: In(ids),
-      //ownerId: AdminUserId,
     });
 
     if (affected !== ids.length)
@@ -325,7 +323,7 @@ export class NewsAdminService {
 
         if (!isExistInDb) {
           const subject = await this.subjectRepo.findOneOrThrowNotFoundExc({
-            where: { id: subjectId }, //ownerId },
+            where: { id: subjectId }, 
           });
 
           newsSubjectToInsert.push(

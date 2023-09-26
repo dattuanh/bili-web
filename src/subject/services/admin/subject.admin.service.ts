@@ -69,7 +69,7 @@ export class SubjectAdminService {
     });
 
     const createdSubject = await this.subjectRepo.save(subject);
-    const existedIds = await this.getSubjectIds(user);
+    const existedIds = await this.getSubjectIds(user);  
     //create subject Detail
     await this.subjectDetailService.createMultiSubjectDetail(
       subjectDetails,
