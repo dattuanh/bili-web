@@ -22,17 +22,17 @@ async function bootstrap() {
   app.enableShutdownHooks();
 
   const config = new DocumentBuilder()
-    .setTitle('Auto Marketing API')
-    .setDescription('Auto Marketing API')
+    .setTitle('Bili Web API')
+    .setDescription('Bili Web API')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
+  
   SwaggerModule.setup('/api/swagger', app, document, {
     swaggerOptions: {
       persistAuthorization: true,
-      // syntaxHighlight: { activated: false },
     },
   });
 

@@ -37,10 +37,9 @@ export class SubjectAdminController {
   @Get()
   @PaginationResponse(SubjectResDto)
   get(
-    @CurrentAuthData() user: User,
     @Query() query: GetListSubjectAdminReqDto,
   ) {
-    return this.subjectAdminService.getList(user, query);
+    return this.subjectAdminService.getList(query);
   }
 
   @Get(':id')
@@ -58,22 +57,20 @@ export class SubjectAdminController {
 
   @Patch()
   update(
-    @CurrentAuthData() user: User,
     @Body() updateSubjectDto: UpdateSubjectAdminReqDto,
   ) {
-    return this.subjectAdminService.update(user, updateSubjectDto);
+    return this.subjectAdminService.update(updateSubjectDto);
   }
 
   @Delete(':id')
-  delete(@CurrentAuthData() user: User, @Param('id', ParseIntPipe) id: number) {
-    return this.subjectAdminService.deleteSingle(user, Number(id));
+  delete(@Param('id', ParseIntPipe) id: number) {
+    return this.subjectAdminService.deleteSingle(Number(id));
   }
 
   @Delete()
   deleteSubjects(
-    @CurrentAuthData() user: User,
     @Body() body: DeleteSubjectsAdminReqDto,
   ) {
-    return this.subjectAdminService.deleteMultiples(user, body);
+    return this.subjectAdminService.deleteMultiples(body);
   }
 }

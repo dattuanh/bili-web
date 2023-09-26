@@ -29,11 +29,9 @@ export class SubjectAdminService {
     private adminRepo: AdminRepository,
   ) {}
 
-  async getList(user: User, dto: GetListSubjectAdminReqDto) {
+  async getList(dto: GetListSubjectAdminReqDto) {
     const { limit, page } = dto;
-    //console.log(user);
 
-    // const AdminUserId = await this.adminRepo.getId(user.admin);
     const qb = this.subjectRepo
       .createQueryBuilder('subject')
       .leftJoinAndSelect('subject.subjectDetails', 'subjectDetail')
@@ -50,7 +48,7 @@ export class SubjectAdminService {
 
   async getOne(id: number) {
     const subject = await this.subjectRepo.findOneOrThrowNotFoundExc({
-      where: { id: id }, //owner: { id: user.id } },
+      where: { id: id }, 
       relations: { 
         subjectDetails: true,
         newsToSubjects: true,
@@ -83,18 +81,18 @@ export class SubjectAdminService {
   }
 
   @Transactional()
-  async update(user: User, updateSubjectDto: UpdateSubjectAdminReqDto) {
+  async update(updateSubjectDto: UpdateSubjectAdminReqDto) {
     const { id, priority } = updateSubjectDto;
 
     const existedSubject = await this.subjectRepo.findOneOrThrowNotFoundExc({
-      where: { id },//owner: { id: AdminUserId } },
+      where: { id },
       relations: { subjectDetails: true },
     });
 
     //Update subject
     if (priority)
       await this.subjectRepo.update(
-        { id }, //ownerId: AdminUserId },
+        { id },
         { priority },
       );
 
@@ -134,7 +132,7 @@ export class SubjectAdminService {
   }
 
   @Transactional()
-  async deleteSingle(user: User, id: number) {
+  async deleteSingle(id: number) {
     const canBeDeleted = await this.checkSubjectCanBeDeleted(id);
 
     if (!canBeDeleted)
@@ -144,11 +142,10 @@ export class SubjectAdminService {
       });
 
     const subject = await this.subjectRepo.findOneOrThrowNotFoundExc({
-      where: { id }, //owner: { id: AdminUserId } },
+      where: { id }, 
     });
     const { affected } = await this.subjectRepo.softDelete({
       id,
-      //ownerId: AdminUserId,
     });
 
     if (!affected) throw new NotFoundExc({ message: 'common.exc.notFound' });
@@ -159,12 +156,12 @@ export class SubjectAdminService {
   }
 
   @Transactional()
-  async deleteMultiples(user: User, dto: DeleteSubjectsAdminReqDto) {
+  async deleteMultiples(dto: DeleteSubjectsAdminReqDto) {
     const { ids } = dto;
 
     for (const id of ids) {
       const subject = await this.subjectRepo.findOneOrThrowNotFoundExc({
-        where: { id }, //owner: { id: AdminUserId } },
+        where: { id }, 
       });
       const canBeDeleted = await this.checkSubjectCanBeDeleted(id);
 
