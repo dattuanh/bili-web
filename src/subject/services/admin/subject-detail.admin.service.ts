@@ -28,12 +28,13 @@ export class SubjectDetailAdminService {
       createSubjectDetailReqDtos.map(async (createSubjectDetailReqDto) => {
         const isExisted = await this.subjectDetailRepo.findOne({
           where: {
-            id: In(existedIds),
+            subjectId: In(existedIds),
             lang: createSubjectDetailReqDto.lang,
             name: createSubjectDetailReqDto.name,
           },
         });
 
+        console.log(isExisted);
         if (isExisted) {
           throw new ConflictExc({ message: 'subject.isExisted' });
         }
@@ -102,4 +103,6 @@ export class SubjectDetailAdminService {
     });
     return subjectDetails.map((subjectDetail) => subjectDetail.id);
   }
+
+
 }

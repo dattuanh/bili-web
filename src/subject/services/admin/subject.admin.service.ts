@@ -69,7 +69,7 @@ export class SubjectAdminService {
     });
 
     const createdSubject = await this.subjectRepo.save(subject);
-    const existedIds = await this.getSubjectIds(user);  
+    const existedIds = await this.getSubjectIds();  
     //create subject Detail
     await this.subjectDetailService.createMultiSubjectDetail(
       subjectDetails,
@@ -191,11 +191,8 @@ export class SubjectAdminService {
     return true;
   }
 
-  async getSubjectIds(user: User) {
-    const AdminUserId = await this.adminRepo.getId(user.admin);
-    const existedSubject = await this.subjectRepo.find({
-      where: { owner: { id: AdminUserId } },
-    });
+  async getSubjectIds() {
+    const existedSubject = await this.subjectRepo.find();
 
     return existedSubject.map((subject) => subject.id);
   }

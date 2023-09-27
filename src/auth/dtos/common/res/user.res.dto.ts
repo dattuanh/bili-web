@@ -31,7 +31,7 @@ export class UserResDto {
 
     // result.type = data.type;
 
-    result.admin = AdminResDto.forAdmin({ data: data.admin });
+    //result.admin = AdminResDto.forAdmin({ data: data.admin });
 
     return result;
   }

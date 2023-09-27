@@ -71,7 +71,7 @@ export class NewsAdminService {
 
     news.newsToSubjects = newsToSubjects;
     news.newsToFile = newsToFile;
-    const existedIds = await this.getNewsIds(user);
+    const existedIds = await this.getNewsIds();
     await this.newsDetailService.createMultiNewsDetail(
       newsDetails,
       news,
@@ -99,12 +99,8 @@ export class NewsAdminService {
     return NewsResDto.forAdmin({ data: news, subjects: subjects });
   }
 
-  async getNewsIds(user: User) {
-    const AdminUserId = await this.adminRepo.getId(user.admin);
-
-    const existedNews = await this.newsRepo.find({
-      where: { owner: { id: AdminUserId } },
-    });
+  async getNewsIds() {
+    const existedNews = await this.newsRepo.find();
 
     return existedNews.map((news) => news.id);
   }
@@ -122,8 +118,9 @@ export class NewsAdminService {
       .innerJoin('newsToSubjects.subject', 'subject')
       .innerJoin('subject.subjectDetails', 'subjectDetails')
       .select('news.id')
-      .groupBy('news.id');
-
+      .groupBy('news.id')
+      .orderBy('news.createdAt', 'DESC');
+ 
     if (title) {
       qb.andWhere('news.title ILIKE :title', { title: `%${title}%` });
     }
@@ -146,9 +143,10 @@ export class NewsAdminService {
       });
     }
 
-    qb.orderBy('news.createdAt', 'DESC');
+    
     const { items, meta } = await paginate(qb, { limit, page });
 
+    console.log(items);
     const news = await Promise.all(
       items.map(async (item) => {
         const existedNews = await this.newsRepo.findOne({

@@ -18,7 +18,7 @@ export class SubjectService {
     private newsRepo: NewsRepository,
     private subjectDetailRepo: SubjectDetailRepository,
     private newsToSubjectRepo: NewsToSubjectRepository,
-  ) {}
+  ) { }
 
   async getList(dto: GetListSubjectReqDto) {
     const { limit, page, newsCountPerSubject } = dto;
@@ -65,14 +65,14 @@ export class SubjectService {
 
     const qb = this.newsRepo
       .createQueryBuilder('news')
-      .innerJoin('news.newsDetails', 'newsDetails')
+      .innerJoin('news.newsDetails', 'NewsDetails')
       .innerJoin('news.newsToFile', 'newsToFile')
       .innerJoin('newsToFile.thumbnail', 'thumbnail')
       .innerJoin('news.newsToSubjects', 'newsToSubjects')
       .innerJoin('newsToSubjects.subject', 'subject')
       .innerJoin('subject.subjectDetails', 'subjectDetails')
       .where('news.status = :status', { status: NewsStatus.ACTIVE })
-      .andWhere('subject.id = :id', { id: id})
+      .andWhere('subject.id = :id', { id: id })
       .select('news.id')
       .groupBy('news.id')
       .orderBy('news.createdAt', 'DESC');
@@ -102,8 +102,8 @@ export class SubjectService {
         });
       }),
     );
-    
+
     return new Pagination(news, meta);
   }
-  
+
 }

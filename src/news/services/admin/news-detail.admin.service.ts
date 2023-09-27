@@ -28,12 +28,12 @@ export class NewsDetailAdminService {
       createNewsDetailReqDtos.map(async (createNewsDetailReqDto) => {
         const isExisted = await this.newsDetailRepo.findOne({
           where: {
-            id: In(existedIds),
+            newsId: In(existedIds),
             lang: createNewsDetailReqDto.lang,
             content: createNewsDetailReqDto.content,
           },
         });
-
+        console.log(isExisted);
         if (isExisted) {
           throw new ConflictExc({ message: 'news.isExisted' });
         }
