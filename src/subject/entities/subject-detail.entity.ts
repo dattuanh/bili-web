@@ -25,6 +25,9 @@ export class SubjectDetail extends BaseEntity {
   @Column({ type: 'enum', enum: Language, enumName: DBTypeName.language })
   lang: Language;
 
+  @Column({ nullable: true, unique: true })
+  slug: string;
+
   @Column({ name: 'subject_id' })
   subjectId: number;
 

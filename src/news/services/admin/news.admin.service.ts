@@ -2,28 +2,28 @@ import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { In, Not } from 'typeorm';
-import { runOnTransactionCommit, Transactional } from 'typeorm-transactional';
+import { Transactional } from 'typeorm-transactional';
 import { User } from '../../../auth/entities/user.entity';
+import { AdminRepository } from '../../../auth/repositories/admin.repository';
+import { UserRepository } from '../../../auth/repositories/user.repository';
 import {
   BadRequestExc,
   ConflictExc,
   NotFoundExc,
 } from '../../../common/exceptions/custom.exception';
 import { SubjectRepository } from '../../../subject/repositories/subject.repository';
-import { NewsResDto } from '../../dtos/common/res/news.admin.res.dto';
 import {
   CreateNewsAdminReqDto,
   DeleteMultipleNewsAdminReqDto,
   GetListNewsAdminReqDto,
   UpdateNewsAdminReqDto,
 } from '../../dtos/admin/news.admin.req.dto';
+import { NewsResDto } from '../../dtos/common/res/news.admin.res.dto';
 import { NewsToSubject } from '../../entities/news-to-subject.entity';
 import { NewsToFileRepository } from '../../repositories/news-to-file.repository';
 import { NewsToSubjectRepository } from '../../repositories/news-to-subject.repository';
 import { NewsRepository } from '../../repositories/news.repository';
 import { NewsDetailAdminService } from './news-detail.admin.service';
-import { AdminRepository } from '../../../auth/repositories/admin.repository';
-import { UserRepository } from '../../../auth/repositories/user.repository';
 
 @Injectable()
 export class NewsAdminService {
@@ -41,14 +41,14 @@ export class NewsAdminService {
   @Transactional()
   async create(dto: CreateNewsAdminReqDto, user: User) {
     const { title, thumbnailId, subjectIds, status, newsDetails } = dto;
-    
+
     const checkDuplicateTitle = await this.newsRepo.findOne({
       where: {
-        title: title
-      }
+        title: title,
+      },
     });
 
-    if(checkDuplicateTitle) {
+    if (checkDuplicateTitle) {
       throw new ConflictExc({ message: 'news.titleIsExisted' });
     }
 
@@ -93,7 +93,7 @@ export class NewsAdminService {
 
   async getOne(id: number) {
     const news = await this.newsRepo.findOneOrThrowNotFoundExc({
-      where: { id: id }, 
+      where: { id: id },
       relations: {
         newsDetails: true,
         newsToFile: { thumbnail: true },
@@ -118,7 +118,7 @@ export class NewsAdminService {
   async getAll(dto: GetListNewsAdminReqDto) {
     const { fromDate, limit, newsStatus, page, subjectIds, title, toDate } =
       dto;
-    
+
     const qb = this.newsRepo
       .createQueryBuilder('news')
       .innerJoin('news.newsDetails', 'newsDetails')
@@ -130,7 +130,7 @@ export class NewsAdminService {
       .select('news.id')
       .groupBy('news.id')
       .orderBy('news.createdAt', 'DESC');
- 
+
     if (title) {
       qb.andWhere('news.title ILIKE :title', { title: `%${title}%` });
     }
@@ -153,10 +153,8 @@ export class NewsAdminService {
       });
     }
 
-    
     const { items, meta } = await paginate(qb, { limit, page });
 
-    console.log(items);
     const news = await Promise.all(
       items.map(async (item) => {
         const existedNews = await this.newsRepo.findOne({
@@ -185,7 +183,6 @@ export class NewsAdminService {
 
   @Transactional()
   async deleteSingle(id: number) {
-
     const news = await this.newsRepo.findOneOrThrowNotFoundExc({
       where: { id },
     });
@@ -201,14 +198,12 @@ export class NewsAdminService {
     // delete relation
     await this.newsToFileRepo.softDelete({ newsId: id });
     await this.newsToSubjectRepo.softDelete({ newsId: id });
-
   }
 
   @Transactional()
   async deleteMultiples(dto: DeleteMultipleNewsAdminReqDto) {
     const { ids } = dto;
-    
-    
+
     for (const id of ids) {
       const news = await this.newsRepo.findOneOrThrowNotFoundExc({
         where: { id },
@@ -226,7 +221,6 @@ export class NewsAdminService {
 
     if (affected !== ids.length)
       throw new NotFoundExc({ message: 'common.exc.notFound' });
-
   }
 
   @Transactional()
@@ -246,11 +240,11 @@ export class NewsAdminService {
     const checkDuplicateTitle = await this.newsRepo.findOne({
       where: {
         title: title,
-        id: Not(id)
-      }
+        id: Not(id),
+      },
     });
 
-    if(checkDuplicateTitle) {
+    if (checkDuplicateTitle) {
       throw new ConflictExc({ message: 'news.titleIsExisted' });
     }
 
@@ -270,11 +264,7 @@ export class NewsAdminService {
     );
 
     // update relation
-    await this.updateRelationOnNews(
-      thumbnailId,
-      subjectIds,
-      existedNews.id
-    );
+    await this.updateRelationOnNews(thumbnailId, subjectIds, existedNews.id);
     return await this.getOne(updateNewsDto.id);
   }
 
@@ -297,11 +287,7 @@ export class NewsAdminService {
         newsId: exitstedNewsId,
       },
     });
-    await this.saveNewsSubject(
-      exitstedNewsId,
-      newsToSubjects,
-      subjectIds,
-    );
+    await this.saveNewsSubject(exitstedNewsId, newsToSubjects, subjectIds);
     //  update news to subject
   }
 
@@ -329,7 +315,7 @@ export class NewsAdminService {
 
         if (!isExistInDb) {
           const subject = await this.subjectRepo.findOneOrThrowNotFoundExc({
-            where: { id: subjectId }, 
+            where: { id: subjectId },
           });
 
           newsSubjectToInsert.push(

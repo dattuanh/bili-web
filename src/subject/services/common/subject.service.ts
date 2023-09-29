@@ -1,15 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { In } from 'typeorm';
+import { NewsResDto } from '../../../news/dtos/common/res/news.admin.res.dto';
 import { NewsStatus } from '../../../news/enums/news.enum';
 import { NewsToSubjectRepository } from '../../../news/repositories/news-to-subject.repository';
 import { NewsRepository } from '../../../news/repositories/news.repository';
+import {
+  GetListNewsBySubjectReqDto,
+  GetListSubjectReqDto,
+} from '../../dtos/common/req/subject.req.dto';
 import { SubjectResDto } from '../../dtos/common/res/subject.res.dto';
-import { GetListNewsBySubjectReqDto, GetListSubjectReqDto } from '../../dtos/common/req/subject.req.dto';
 import { Subject } from '../../entities/subject.entity';
 import { SubjectDetailRepository } from '../../repositories/subject-detail.repository';
 import { SubjectRepository } from '../../repositories/subject.repository';
-import { NewsResDto } from '../../../news/dtos/common/res/news.admin.res.dto';
 
 @Injectable()
 export class SubjectService {
@@ -18,7 +21,7 @@ export class SubjectService {
     private newsRepo: NewsRepository,
     private subjectDetailRepo: SubjectDetailRepository,
     private newsToSubjectRepo: NewsToSubjectRepository,
-  ) { }
+  ) {}
 
   async getList(dto: GetListSubjectReqDto) {
     const { limit, page, newsCountPerSubject } = dto;
@@ -60,9 +63,10 @@ export class SubjectService {
     return new Pagination(subjectsWithCorrectOrder, meta, links);
   }
 
-  async getOne(id: number, dto: GetListNewsBySubjectReqDto) {
+  async getOne(slug: string, dto: GetListNewsBySubjectReqDto) {
     const { limit, page } = dto;
 
+    console.log(slug);
     const qb = this.newsRepo
       .createQueryBuilder('news')
       .innerJoin('news.newsDetails', 'NewsDetails')
@@ -72,13 +76,14 @@ export class SubjectService {
       .innerJoin('newsToSubjects.subject', 'subject')
       .innerJoin('subject.subjectDetails', 'subjectDetails')
       .where('news.status = :status', { status: NewsStatus.ACTIVE })
-      .andWhere('subject.id = :id', { id })
+      .andWhere('subjectDetails.slug = :slug', { slug })
       .select('news.id')
       .groupBy('news.id')
       .orderBy('news.createdAt', 'DESC');
 
     const { items, meta } = await paginate(qb, { limit, page });
 
+    console.log(items);
     const news = await Promise.all(
       items.map(async (item) => {
         const existedNews = await this.newsRepo.findOne({
@@ -105,5 +110,4 @@ export class SubjectService {
 
     return new Pagination(news, meta);
   }
-
 }

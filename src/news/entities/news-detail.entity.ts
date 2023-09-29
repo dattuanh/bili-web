@@ -30,6 +30,9 @@ export class NewsDetail extends BaseEntity {
   @Column()
   description: string;
 
+  @Column({ nullable: true, unique: true })
+  slug: string;
+
   @Column({ name: 'news_id' })
   newsId: number;
 

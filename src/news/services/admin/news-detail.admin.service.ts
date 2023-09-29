@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+// import slugify from 'slugify';
 import { In } from 'typeorm';
 import { Transactional } from 'typeorm-transactional';
 import {
@@ -33,7 +34,7 @@ export class NewsDetailAdminService {
             content: createNewsDetailReqDto.content,
           },
         });
-        console.log(isExisted);
+
         if (isExisted) {
           throw new ConflictExc({ message: 'news.isExisted' });
         }
@@ -42,6 +43,9 @@ export class NewsDetailAdminService {
           ...createNewsDetailReqDto,
           newsId: news.id,
           title: news.title,
+          // slug: slugify(news.title, {
+          //   locale: 'vi',
+          // }),
         });
       }),
     );
@@ -86,7 +90,13 @@ export class NewsDetailAdminService {
           title: news.title,
         });
       newsDetail.title = news.title;
-      return newsDetail;
+
+      return this.newsDetailRepo.create({
+        ...newsDetail,
+        // slug: slugify(news.title, {
+        //   locale: 'vi',
+        // }),
+      });
     });
 
     const updatedNewsDetails = await this.newsDetailRepo.save(

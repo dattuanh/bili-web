@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
+// import slugify from 'slugify';
 import { In } from 'typeorm';
 import { Transactional } from 'typeorm-transactional';
 import {
   ConflictExc,
   NotFoundExc,
 } from '../../../common/exceptions/custom.exception';
-import { SubjectDetailResDto } from '../../dtos/common/res/subject-detail.res.dto';
 import {
   CreateSubjectDetailAdminReqDto,
   UpdateSubjectDetailAdminReqDto,
 } from '../../dtos/admin/req/subject-detail.admin.req.dto';
+import { SubjectDetailResDto } from '../../dtos/common/res/subject-detail.res.dto';
 import { SubjectDetail } from '../../entities/subject-detail.entity';
 import { Subject } from '../../entities/subject.entity';
 import { SubjectDetailRepository } from '../../repositories/subject-detail.repository';
@@ -37,8 +38,12 @@ export class SubjectDetailAdminService {
         if (isExisted) {
           throw new ConflictExc({ message: 'subject.isExisted' });
         }
+
         return this.subjectDetailRepo.create({
           ...createSubjectDetailReqDto,
+          // slug: slugify(createSubjectDetailReqDto.name, {
+          //   locale: 'vi',
+          // }),
           subjectId,
         });
       }),
@@ -63,7 +68,13 @@ export class SubjectDetailAdminService {
             ...subjectDetail,
             subjectId,
           });
-        return subjectDetail;
+
+        return this.subjectDetailRepo.create({
+          ...subjectDetail,
+          // slug: slugify(subjectDetail.name, {
+          //   locale: 'vi',
+          // }),
+        });
       },
     );
 
@@ -102,6 +113,4 @@ export class SubjectDetailAdminService {
     });
     return subjectDetails.map((subjectDetail) => subjectDetail.id);
   }
-
-
 }
