@@ -34,4 +34,13 @@ export class ContactResDto {
         return result;
     }
 
+    static forCustomer(param: ContactResDtoParams) {
+        if(!param) return null;
+        const result = new ContactResDto();
+
+        this.mapProperty(result, param);
+
+        return result;
+    }
+
 }

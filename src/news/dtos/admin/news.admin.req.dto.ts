@@ -5,6 +5,7 @@ import {
   IsValidDate,
   IsValidEnum,
   IsValidNumber,
+  IsValidObject,
   IsValidText,
 } from '../../../common/decorators/custom-validator.decorator';
 import { PaginationReqDto } from '../../../common/dtos/pagination.dto';
@@ -30,7 +31,10 @@ export class CreateNewsDetailAdminReqDto extends SaveNewsDetailAdminReqDto {}
 
 export class UpdateNewsDetailAdminReqDto extends SaveNewsDetailAdminReqDto {
   @IsValidNumber({ required: false })
-  id?: number;
+  id: number;
+
+  @IsValidText({ required: false })
+  title: string;
 }
 
 export class SaveNewsAdminReqDto {

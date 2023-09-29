@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
-import { In } from 'typeorm';
+import { In, Not } from 'typeorm';
 import { runOnTransactionCommit, Transactional } from 'typeorm-transactional';
 import { User } from '../../../auth/entities/user.entity';
 import {
   BadRequestExc,
+  ConflictExc,
   NotFoundExc,
 } from '../../../common/exceptions/custom.exception';
 import { SubjectRepository } from '../../../subject/repositories/subject.repository';
@@ -28,7 +29,6 @@ import { UserRepository } from '../../../auth/repositories/user.repository';
 export class NewsAdminService {
   constructor(
     private eventEmitter: EventEmitter2,
-
     private subjectRepo: SubjectRepository,
     private newsRepo: NewsRepository,
     private newsToFileRepo: NewsToFileRepository,
@@ -42,6 +42,16 @@ export class NewsAdminService {
   async create(dto: CreateNewsAdminReqDto, user: User) {
     const { title, thumbnailId, subjectIds, status, newsDetails } = dto;
     
+    const checkDuplicateTitle = await this.newsRepo.findOne({
+      where: {
+        title: title
+      }
+    });
+
+    if(checkDuplicateTitle) {
+      throw new ConflictExc({ message: 'news.titleIsExisted' });
+    }
+
     const news = this.newsRepo.create({
       title: title,
       status: status,
@@ -231,6 +241,19 @@ export class NewsAdminService {
         newsToFile: true,
       },
     });
+    existedNews.title = title;
+
+    const checkDuplicateTitle = await this.newsRepo.findOne({
+      where: {
+        title: title,
+        id: Not(id)
+      }
+    });
+
+    if(checkDuplicateTitle) {
+      throw new ConflictExc({ message: 'news.titleIsExisted' });
+    }
+
     await this.newsRepo.update(id, { title, status });
 
     //Check News Details
@@ -240,23 +263,8 @@ export class NewsAdminService {
     )
       throw new BadRequestExc({ message: 'common.exc.badRequest' });
 
-    //Filter News Detail dont have in updateNewsDto
-    const deleteNewsDetails = existedNews.newsDetails.filter((newsDetail) => {
-      if (!newsDetail.id) return;
-      return !updateNewsDto.newsDetails.find((updateNewsDetails) => {
-        return newsDetail.id === updateNewsDetails.id;
-      });
-    });
-
-    //Delete news Detail
-    if (deleteNewsDetails.length > 0)
-      await this.newsDetailService.deleteMulti(
-        deleteNewsDetails.map((deleteSubjectDetail) => deleteSubjectDetail.id),
-        id,
-      );
-
-    //Create or update news Detail
-    await this.newsDetailService.createOrUpdateNewsDetail(
+    // update news Detail
+    await this.newsDetailService.updateNewsDetail(
       updateNewsDto.newsDetails,
       existedNews,
     );

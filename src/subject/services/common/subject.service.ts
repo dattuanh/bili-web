@@ -72,7 +72,7 @@ export class SubjectService {
       .innerJoin('newsToSubjects.subject', 'subject')
       .innerJoin('subject.subjectDetails', 'subjectDetails')
       .where('news.status = :status', { status: NewsStatus.ACTIVE })
-      .andWhere('subject.id = :id', { id: id })
+      .andWhere('subject.id = :id', { id })
       .select('news.id')
       .groupBy('news.id')
       .orderBy('news.createdAt', 'DESC');

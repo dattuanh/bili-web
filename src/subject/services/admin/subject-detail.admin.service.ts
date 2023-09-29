@@ -34,7 +34,6 @@ export class SubjectDetailAdminService {
           },
         });
 
-        console.log(isExisted);
         if (isExisted) {
           throw new ConflictExc({ message: 'subject.isExisted' });
         }

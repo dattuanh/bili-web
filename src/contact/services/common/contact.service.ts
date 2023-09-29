@@ -22,15 +22,6 @@ export class ContactService {
 
     await this.contactRepo.save(contact);
 
-    return await this.getOne(contact.id);
+    return ContactResDto.forCustomer({data: contact}); 
   }
-
-  async getOne(id: number) {
-    const contact = await this.contactRepo.findOneOrThrowNotFoundExc({
-      where: { id: id },
-    });
-
-    return ContactResDto.forAdmin({ data: contact });
-  }
-
 }

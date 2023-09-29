@@ -5,11 +5,11 @@ import {
   ConflictExc,
   NotFoundExc,
 } from '../../../common/exceptions/custom.exception';
-import { NewsDetailResDto } from '../../dtos/common/res/news-detail.res.dto';
 import {
   CreateNewsDetailAdminReqDto,
   UpdateNewsDetailAdminReqDto,
 } from '../../dtos/admin/news.admin.req.dto';
+import { NewsDetailResDto } from '../../dtos/common/res/news-detail.res.dto';
 import { NewsDetail } from '../../entities/news-detail.entity';
 import { News } from '../../entities/news.entity';
 import { NewsDetailRepository } from '../../repositories/news-detail.repository';
@@ -74,17 +74,18 @@ export class NewsDetailAdminService {
   }
 
   @Transactional()
-  async createOrUpdateNewsDetail(
-    createOrUpdateNewsDetailDto: UpdateNewsDetailAdminReqDto[],
+  async updateNewsDetail(
+    updateNewsDetailDto: UpdateNewsDetailAdminReqDto[],
     news: News,
   ) {
-    const updateNewsDetails = createOrUpdateNewsDetailDto.map((newsDetail) => {
+    const updateNewsDetails = updateNewsDetailDto.map((newsDetail) => {
       if (!newsDetail.id)
         return this.newsDetailRepo.create({
           ...newsDetail,
           newsId: news.id,
           title: news.title,
         });
+      newsDetail.title = news.title;
       return newsDetail;
     });
 

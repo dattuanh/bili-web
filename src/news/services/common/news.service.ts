@@ -22,6 +22,8 @@ export class NewsService {
         newsToSubjects: { subject: { subjectDetails: true } },
       },
     });
+
+    // co the bỏ
     const newsToSubject = await this.newsToSubjectRepo.find({
       where: { newsId: news.id },
       relations: { subject: { subjectDetails: true } },

@@ -320,6 +320,7 @@ export type I18nTranslations = {
     };
     "news": {
         "isExisted": string;
+        "titleIsExisted": string;
     };
     "noti": {
         "common": {
