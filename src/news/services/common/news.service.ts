@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
-import { NewsResDto } from '../../dtos/common/res/news.admin.res.dto';
 import { GetListNewsReqDto } from '../../dtos/common/req/news.req.dto';
+import { NewsResDto } from '../../dtos/common/res/news.admin.res.dto';
 import { NewsStatus } from '../../enums/news.enum';
 import { NewsToSubjectRepository } from '../../repositories/news-to-subject.repository';
 import { NewsRepository } from '../../repositories/news.repository';
@@ -13,9 +13,14 @@ export class NewsService {
     private newsToSubjectRepo: NewsToSubjectRepository,
   ) {}
 
-  async getOne(id: number) {
+  async getOne(slug: string) {
     const news = await this.newsRepo.findOneOrThrowNotFoundExc({
-      where: { id: id, status: NewsStatus.ACTIVE},
+      where: {
+        status: NewsStatus.ACTIVE,
+        newsDetails: {
+          slug: slug,
+        },
+      },
       relations: {
         newsDetails: true,
         newsToFile: { thumbnail: true },
@@ -23,7 +28,6 @@ export class NewsService {
       },
     });
 
-    // co the bỏ
     const newsToSubject = await this.newsToSubjectRepo.find({
       where: { newsId: news.id },
       relations: { subject: { subjectDetails: true } },
@@ -90,5 +94,4 @@ export class NewsService {
 
     return new Pagination(news, meta);
   }
-
 }
