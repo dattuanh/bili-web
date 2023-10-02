@@ -3,22 +3,22 @@ import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { In } from 'typeorm';
 import { Transactional } from 'typeorm-transactional';
 import { User } from '../../../auth/entities/user.entity';
+import { AdminRepository } from '../../../auth/repositories/admin.repository';
 import {
   BadRequestExc,
   ExpectationFailedExc,
   NotFoundExc,
 } from '../../../common/exceptions/custom.exception';
 import { NewsRepository } from '../../../news/repositories/news.repository';
-import { SubjectResDto } from '../../dtos/common/res/subject.res.dto';
 import {
   CreateSubjectAdminReqDto,
   DeleteSubjectsAdminReqDto,
   GetListSubjectAdminReqDto,
   UpdateSubjectAdminReqDto,
 } from '../../dtos/admin/req/subject.admin.req.dto';
+import { SubjectResDto } from '../../dtos/common/res/subject.res.dto';
 import { SubjectRepository } from '../../repositories/subject.repository';
 import { SubjectDetailAdminService } from './subject-detail.admin.service';
-import { AdminRepository } from '../../../auth/repositories/admin.repository';
 
 @Injectable()
 export class SubjectAdminService {
@@ -48,8 +48,8 @@ export class SubjectAdminService {
 
   async getOne(id: number) {
     const subject = await this.subjectRepo.findOneOrThrowNotFoundExc({
-      where: { id: id }, 
-      relations: { 
+      where: { id: id },
+      relations: {
         subjectDetails: true,
         newsToSubjects: true,
       },
@@ -69,7 +69,7 @@ export class SubjectAdminService {
     });
 
     const createdSubject = await this.subjectRepo.save(subject);
-    const existedIds = await this.getSubjectIds();  
+    const existedIds = await this.getSubjectIds();
     //create subject Detail
     await this.subjectDetailService.createMultiSubjectDetail(
       subjectDetails,
@@ -90,11 +90,7 @@ export class SubjectAdminService {
     });
 
     //Update subject
-    if (priority)
-      await this.subjectRepo.update(
-        { id },
-        { priority },
-      );
+    if (priority) await this.subjectRepo.update({ id }, { priority });
 
     //Check Subject Details
     if (
@@ -142,7 +138,7 @@ export class SubjectAdminService {
       });
 
     const subject = await this.subjectRepo.findOneOrThrowNotFoundExc({
-      where: { id }, 
+      where: { id },
     });
     const { affected } = await this.subjectRepo.softDelete({
       id,
@@ -161,7 +157,7 @@ export class SubjectAdminService {
 
     for (const id of ids) {
       const subject = await this.subjectRepo.findOneOrThrowNotFoundExc({
-        where: { id }, 
+        where: { id },
       });
       const canBeDeleted = await this.checkSubjectCanBeDeleted(id);
 
@@ -181,7 +177,7 @@ export class SubjectAdminService {
     if (affected !== ids.length)
       throw new NotFoundExc({ message: 'common.exc.notFound' });
   }
-
+  u;
   async checkSubjectCanBeDeleted(subjectId: number) {
     const isExisted = await this.newsRepo.findFirst({
       where: { newsToSubjects: { subjectId: subjectId } },
