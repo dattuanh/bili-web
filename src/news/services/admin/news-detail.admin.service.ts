@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-// import slugify from 'slugify';
+import slugify from 'slugify';
 import { In } from 'typeorm';
 import { Transactional } from 'typeorm-transactional';
 import {
@@ -43,9 +43,9 @@ export class NewsDetailAdminService {
           ...createNewsDetailReqDto,
           newsId: news.id,
           title: news.title,
-          // slug: slugify(news.title, {
-          //   locale: 'vi',
-          // }),
+          slug: slugify(news.title, {
+            locale: 'vi',
+          }),
         });
       }),
     );
@@ -89,13 +89,13 @@ export class NewsDetailAdminService {
           newsId: news.id,
           title: news.title,
         });
-      newsDetail.title = news.title;
 
       return this.newsDetailRepo.create({
         ...newsDetail,
-        // slug: slugify(news.title, {
-        //   locale: 'vi',
-        // }),
+        title: news.title,
+        slug: slugify(news.title, {
+          locale: 'vi',
+        }),
       });
     });
 

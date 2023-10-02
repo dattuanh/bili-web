@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-// import slugify from 'slugify';
+import slugify from 'slugify';
 import { In } from 'typeorm';
 import { Transactional } from 'typeorm-transactional';
 import {
@@ -41,9 +41,9 @@ export class SubjectDetailAdminService {
 
         return this.subjectDetailRepo.create({
           ...createSubjectDetailReqDto,
-          // slug: slugify(createSubjectDetailReqDto.name, {
-          //   locale: 'vi',
-          // }),
+          slug: slugify(createSubjectDetailReqDto.name, {
+            locale: 'vi',
+          }),
           subjectId,
         });
       }),
@@ -71,9 +71,9 @@ export class SubjectDetailAdminService {
 
         return this.subjectDetailRepo.create({
           ...subjectDetail,
-          // slug: slugify(subjectDetail.name, {
-          //   locale: 'vi',
-          // }),
+          slug: slugify(subjectDetail.name, {
+            locale: 'vi',
+          }),
         });
       },
     );
