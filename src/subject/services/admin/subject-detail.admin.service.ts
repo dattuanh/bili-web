@@ -57,33 +57,22 @@ export class SubjectDetailAdminService {
   }
 
   @Transactional()
-  async createOrUpdateSubjectDetail(
+  async updateSubjectDetail(
     createOrUpdateSubjectDetailDto: UpdateSubjectDetailAdminReqDto[],
     subjectId: number,
   ) {
     const updateSubjectDetails = createOrUpdateSubjectDetailDto.map(
       (subjectDetail) => {
         if (!subjectDetail.id)
-          return this.subjectDetailRepo.create({
-            ...subjectDetail,
-            subjectId,
-          });
+          throw new NotFoundExc({ message: 'subject.notFoundSubjectDetail' });
 
-        return this.subjectDetailRepo.create({
+        this.subjectDetailRepo.update(subjectDetail.id, {
           ...subjectDetail,
           slug: slugify(subjectDetail.name, {
             locale: 'vi',
           }),
         });
       },
-    );
-
-    const updatedSubjectDetails = await this.subjectDetailRepo.save(
-      updateSubjectDetails,
-    );
-
-    return updatedSubjectDetails.map((subjectDetail) =>
-      SubjectDetailResDto.forAdmin({ data: subjectDetail }),
     );
   }
 

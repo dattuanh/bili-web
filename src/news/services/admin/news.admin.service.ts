@@ -81,14 +81,10 @@ export class NewsAdminService {
 
     news.newsToSubjects = newsToSubjects;
     news.newsToFile = newsToFile;
-    const existedIds = await this.getNewsIds();
-    await this.newsDetailService.createMultiNewsDetail(
-      newsDetails,
-      news,
-      existedIds,
-    );
 
-    return await this.getOne(news.id);
+    await this.newsDetailService.createMultiNewsDetail(newsDetails, news);
+
+    return news; //await this.getOne(news.id);
   }
 
   async getOne(id: number) {
@@ -97,7 +93,6 @@ export class NewsAdminService {
       relations: {
         newsDetails: true,
         newsToFile: { thumbnail: true },
-        newsToSubjects: { subject: { subjectDetails: true } },
       },
     });
 
@@ -105,14 +100,10 @@ export class NewsAdminService {
       where: { newsId: news.id },
       relations: { subject: { subjectDetails: true } },
     });
+
     const subjects = newsToSubject.map((item) => item.subject);
+
     return NewsResDto.forAdmin({ data: news, subjects: subjects });
-  }
-
-  async getNewsIds() {
-    const existedNews = await this.newsRepo.find();
-
-    return existedNews.map((news) => news.id);
   }
 
   async getAll(dto: GetListNewsAdminReqDto) {
@@ -148,9 +139,7 @@ export class NewsAdminService {
     }
 
     if (subjectIds?.length) {
-      qb.andWhere('subject.id IN (:...subjectIds)', {
-        subjectIds,
-      });
+      qb.andWhere('subject.id IN (:...subjectIds)', { subjectIds });
     }
 
     const { items, meta } = await paginate(qb, { limit, page });
@@ -257,7 +246,7 @@ export class NewsAdminService {
     )
       throw new BadRequestExc({ message: 'common.exc.badRequest' });
 
-    // update news Detail
+    //update news Detail
     await this.newsDetailService.updateNewsDetail(
       updateNewsDto.newsDetails,
       existedNews,

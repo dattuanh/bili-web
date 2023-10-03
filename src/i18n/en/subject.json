@@ -1,3 +1,4 @@
 {
-  "isExisted": "this subject is already existed"
+  "isExisted": "this subject is already existed",
+  "notFoundSubjectDetail": "this subject detail is not found"
 }

@@ -27,12 +27,4 @@ export class RedisKeyService {
       'environment',
     )}:OTP_THRESHOLD:${appCode}:${phoneNumber}`;
   }
-
-  zaloTokenKey() {
-    return `${this.configSer.get('environment')}:ZALO_TOKEN`;
-  }
-
-  merchantZnsNotiQuotaKey() {
-    return `${this.configSer.get('environment')}:MERCHANT_ZNS_NOTI_QUOTA`;
-  }
 }

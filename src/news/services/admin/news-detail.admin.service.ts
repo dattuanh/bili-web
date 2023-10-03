@@ -23,13 +23,14 @@ export class NewsDetailAdminService {
   async createMultiNewsDetail(
     createNewsDetailReqDtos: CreateNewsDetailAdminReqDto[],
     news: News,
-    existedIds: number[],
   ) {
+    const existedIds = await this.getListNewsDetailId();
+
     const newsDetails = await Promise.all(
       createNewsDetailReqDtos.map(async (createNewsDetailReqDto) => {
         const isExisted = await this.newsDetailRepo.findOne({
           where: {
-            newsId: In(existedIds),
+            id: In(existedIds),
             lang: createNewsDetailReqDto.lang,
             content: createNewsDetailReqDto.content,
           },
@@ -70,6 +71,12 @@ export class NewsDetailAdminService {
     if (!affected) throw new NotFoundExc({ message: 'common.exc.notFound' });
   }
 
+  async getListNewsDetailId() {
+    const existedNewsDetail = await this.newsDetailRepo.find();
+
+    return existedNewsDetail.map((news) => news.id);
+  }
+
   async getNewsDetailIds(news: News) {
     const newsDetails = await this.newsDetailRepo.find({
       where: { newsId: news.id },
@@ -84,13 +91,9 @@ export class NewsDetailAdminService {
   ) {
     const updateNewsDetails = updateNewsDetailDto.map((newsDetail) => {
       if (!newsDetail.id)
-        return this.newsDetailRepo.create({
-          ...newsDetail,
-          newsId: news.id,
-          title: news.title,
-        });
+        throw new NotFoundExc({ message: 'news.notFoundNewsDetail' });
 
-      return this.newsDetailRepo.create({
+      this.newsDetailRepo.update(newsDetail.id, {
         ...newsDetail,
         title: news.title,
         slug: slugify(news.title, {
@@ -99,12 +102,6 @@ export class NewsDetailAdminService {
       });
     });
 
-    const updatedNewsDetails = await this.newsDetailRepo.save(
-      updateNewsDetails,
-    );
-
-    return updatedNewsDetails.map((newsDetail) =>
-      NewsDetailResDto.forAdmin({ data: newsDetail }),
-    );
+    return updateNewsDetails;
   }
 }

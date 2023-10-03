@@ -38,6 +38,7 @@ import { redisConfig } from '../common/config/redis.config';
 import { TIME_ZONE } from '../common/constants/global.constant';
 import { AppEnvironment } from '../common/enums/app.enum';
 import { AllExceptionsFilter } from '../common/filters/all.filter';
+import { ContactModule } from '../contact/contact.module';
 import { FileModule } from '../file/file.module';
 import { HealthModule } from '../health/health.module';
 import { NewsModule } from '../news/news.module';
@@ -45,7 +46,6 @@ import { SubjectModule } from '../subject/subject.module';
 import { UtilsModule } from '../utils/utils.module';
 import { AppController } from './controllers/app.controller';
 import { AppService } from './services/app.service';
-import { ContactModule } from '../contact/contact.module';
 
 @Module({
   imports: [
@@ -141,8 +141,5 @@ export class AppModule implements OnModuleInit {
     );
 
     if (isLocalOrTest) return;
-
-    // this.moduleRef.get(CacheService, { strict: false }).initCache();
-    // this.moduleRef.get(CaslTaskService, { strict: false }).syncPolicies();
   }
 }

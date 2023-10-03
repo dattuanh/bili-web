@@ -17,6 +17,7 @@ import {
   UpdateSubjectAdminReqDto,
 } from '../../dtos/admin/req/subject.admin.req.dto';
 import { SubjectResDto } from '../../dtos/common/res/subject.res.dto';
+import { Subject } from '../../entities/subject.entity';
 import { SubjectRepository } from '../../repositories/subject.repository';
 import { SubjectDetailAdminService } from './subject-detail.admin.service';
 
@@ -34,16 +35,32 @@ export class SubjectAdminService {
 
     const qb = this.subjectRepo
       .createQueryBuilder('subject')
-      .leftJoinAndSelect('subject.subjectDetails', 'subjectDetail')
+      // .leftJoinAndSelect('subject.subjectDetails', 'subjectDetail')
       .orderBy('subject.priority', 'ASC')
-      .addOrderBy('subject.createdAt', 'DESC');
+      .addOrderBy('subject.createdAt', 'DESC')
+      .groupBy('subject.id')
+      .select('subject.id');
 
     const { items, meta } = await paginate(qb, { limit, page });
 
-    const subjects = items.map((item) =>
-      SubjectResDto.forAdmin({ data: item }),
+    const subjects = await this.subjectRepo.find({
+      where: { id: In(items.map((item) => item.id)) },
+      relations: {
+        subjectDetails: true,
+      },
+    });
+
+    const mapSubjectIdToSubjects: Record<string, Subject> = {};
+
+    for (const subject of subjects) {
+      mapSubjectIdToSubjects[subject.id] = subject;
+    }
+
+    const result = items.map((item) =>
+      SubjectResDto.forAdmin({ data: mapSubjectIdToSubjects[item.id] }),
     );
-    return new Pagination(subjects, meta);
+
+    return new Pagination(result, meta);
   }
 
   async getOne(id: number) {
@@ -77,7 +94,7 @@ export class SubjectAdminService {
       existedIds,
     );
 
-    return await this.getOne(createdSubject.id);
+    return subject; //await this.getOne(createdSubject.id);
   }
 
   @Transactional()
@@ -99,27 +116,8 @@ export class SubjectAdminService {
     )
       throw new BadRequestExc({ message: 'common.exc.badRequest' });
 
-    //Filter Subject Detail dont have in updateSubjectDto
-    const deleteSubjectDetails = existedSubject.subjectDetails.filter(
-      (subjectDetail) => {
-        if (!subjectDetail.id) return;
-        return !updateSubjectDto.subjectDetails.find((updateSubjectDetails) => {
-          return subjectDetail.id === updateSubjectDetails.id;
-        });
-      },
-    );
-
-    //Delete subject Detail
-    if (deleteSubjectDetails.length > 0)
-      await this.subjectDetailService.deleteMulti(
-        deleteSubjectDetails.map(
-          (deleteSubjectDetail) => deleteSubjectDetail.id,
-        ),
-        id,
-      );
-
-    //Create or update subject Detail
-    await this.subjectDetailService.createOrUpdateSubjectDetail(
+    //update subject Detail
+    await this.subjectDetailService.updateSubjectDetail(
       updateSubjectDto.subjectDetails,
       updateSubjectDto.id,
     );
@@ -177,7 +175,7 @@ export class SubjectAdminService {
     if (affected !== ids.length)
       throw new NotFoundExc({ message: 'common.exc.notFound' });
   }
-  u;
+
   async checkSubjectCanBeDeleted(subjectId: number) {
     const isExisted = await this.newsRepo.findFirst({
       where: { newsToSubjects: { subjectId: subjectId } },

@@ -13,13 +13,7 @@ import { FileSubscriber } from './subscribers/file.subscriber';
     forwardRef(() => AuthModule),
     TypeOrmCustomModule.forFeature([FileRepository]),
   ],
-  controllers: [
-    FileAdminController,
-  ],
-  providers: [
-    FileAdminService,
-    FileSubscriber,
-  ],
-  // exports: [FileMerchantService],
+  controllers: [FileAdminController],
+  providers: [FileAdminService, FileSubscriber],
 })
 export class FileModule {}
