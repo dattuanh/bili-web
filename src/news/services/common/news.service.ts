@@ -24,7 +24,6 @@ export class NewsService {
       relations: {
         newsDetails: true,
         newsToFile: { thumbnail: true },
-        newsToSubjects: { subject: { subjectDetails: true } },
       },
     });
 
@@ -33,6 +32,7 @@ export class NewsService {
       relations: { subject: { subjectDetails: true } },
     });
     const subjects = newsToSubject.map((item) => item.subject);
+
     return NewsResDto.forCustomer({ data: news, subjects: subjects });
   }
 

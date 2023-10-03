@@ -321,6 +321,7 @@ export type I18nTranslations = {
     "news": {
         "isExisted": string;
         "titleIsExisted": string;
+        "notFoundNewsDetail": string;
     };
     "noti": {
         "common": {
@@ -489,6 +490,7 @@ export type I18nTranslations = {
     };
     "subject": {
         "isExisted": string;
+        "notFoundSubjectDetail": string;
     };
     "survey": {
         "notFound": string;

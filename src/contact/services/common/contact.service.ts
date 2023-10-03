@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { Transactional } from 'typeorm-transactional';
 import { CreateContactReqDto } from '../../dto/common/req/contact.req.dto';
 import { ContactRepository } from '../../repositories/contact.repository';
-import { Transactional } from 'typeorm-transactional';
-import { ContactResDto } from '../../dto/common/res/contact.res.dto';
 
 @Injectable()
 export class ContactService {
-  constructor(private contactRepo: ContactRepository) { }
+  constructor(private contactRepo: ContactRepository) {}
 
   @Transactional()
   async create(dto: CreateContactReqDto) {
@@ -22,6 +21,6 @@ export class ContactService {
 
     await this.contactRepo.save(contact);
 
-    return ContactResDto.forCustomer({data: contact}); 
+    return contact;
   }
 }

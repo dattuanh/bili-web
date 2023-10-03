@@ -1,4 +1,3 @@
-// import { GetListCustomerMerchantReqDto } from '../../auth/dtos/merchant/req/customer.merchant.req.dto';
 import { User } from '../../auth/entities/user.entity';
 import { NonFunctionProperties } from '../../common/types/utils.type';
 // import { GetListGameWinHistoryMerchantReqDto } from '../../game/dtos/merchant/req/game-win-history.merchant.req.dto';
@@ -26,20 +25,19 @@ export class ExportJobDataDto<T = any> {
 }
 
 export type IHandleExportDto = {
-  params:
-    // | GetListCustomerMerchantReqDto
-    // | GetListUserJoinSurveyMerchantReqDto
-    // | GetDetailUserSurveyAnswerMerchantReqDto
-    // | ExportOrderRefund
-    // | GetFeedbackMerchantDto
-    // | GetListGameWinHistoryMerchantReqDto
-    // | GetLineChartStatisticOrderMerchantReqDto
-    // | GetListOrdersMerchantReqDto
-    // | GetListExternalReferrerMerchantReqDto
-    // | GetListReferralHistoryMerchantReqDto
-    // | GetLineChartStatisticGameMerchantReqDto
-    | number
-    // | ExportListLoyaltyCodeMerchantReqDto;
+  params: // | GetListCustomerMerchantReqDto
+  // | GetListUserJoinSurveyMerchantReqDto
+  // | GetDetailUserSurveyAnswerMerchantReqDto
+  // | ExportOrderRefund
+  // | GetFeedbackMerchantDto
+  // | GetListGameWinHistoryMerchantReqDto
+  // | GetLineChartStatisticOrderMerchantReqDto
+  // | GetListOrdersMerchantReqDto
+  // | GetListExternalReferrerMerchantReqDto
+  // | GetListReferralHistoryMerchantReqDto
+  // | GetLineChartStatisticGameMerchantReqDto
+  number;
+  // | ExportListLoyaltyCodeMerchantReqDto;
   owner: User;
   fileName: string;
 };

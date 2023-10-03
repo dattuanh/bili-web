@@ -30,7 +30,7 @@ export class CreateNewsDetailAdminReqDto extends SaveNewsDetailAdminReqDto {}
 
 export class UpdateNewsDetailAdminReqDto extends SaveNewsDetailAdminReqDto {
   @IsValidNumber({ required: false })
-  id: number;
+  id?: number;
 }
 
 export class SaveNewsAdminReqDto {

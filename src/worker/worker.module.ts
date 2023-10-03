@@ -25,63 +25,15 @@ import {
 import { TypeOrmCustomModule } from 'utility/dist';
 import { dataSource } from '../../data-source';
 import { AuthModule } from '../auth/auth.module';
-// import { CustomerRepository } from '../auth/repositories/customer.repository';
-// import { MerchantRepository } from '../auth/repositories/merchant.repository';
 import { UserRepository } from '../auth/repositories/user.repository';
-// import { CaslModule } from '../casl/casl.module';
 import appConfig, { AppConfig } from '../common/config/app.config';
 import { bullOptions, bullQueues } from '../common/config/bull.config';
 import { redisConfig } from '../common/config/redis.config';
 import { TIME_ZONE } from '../common/constants/global.constant';
-// import { UserCreditRepository } from '../credit/repositories/user-credit.repository';
-// import { UserHistoryCreditRepository } from '../credit/repositories/user-history-credit.repository';
-// import { RequestExportRepository } from '../export/repositories/request-export.repositories';
-// import { ExternalModule } from '../external/external.module';
-// import { OutboxMessageRepository } from '../external/repositories/outbox-message.repository';
 import { FileModule } from '../file/file.module';
 import { FileRepository } from '../file/repositories/file.repository';
-// import { GameModule } from '../game/game.module';
-// import { GamePlayTimeRepository } from '../game/repositories/game-play-time.repository';
-// import { GameTypeRepository } from '../game/repositories/game-type.repository';
-// import { GameWinHistoryRepository } from '../game/repositories/game-win-history.repository';
-// import { GameRepository } from '../game/repositories/game.repository';
 import { HealthModule } from '../health/health.module';
-// import { RequestImportRepository } from '../import/repositories/request-import.repository';
-// import { LoyaltyCodeModule } from '../loyalty-code/loyalty-code.module';
-// import { LoyaltyCodeGiftGameRepository } from '../loyalty-code/repositories/loyalty-code-gift-game.repository';
-// import { LoyaltyCodeGiftProductRepository } from '../loyalty-code/repositories/loyalty-code-gift-product.repository';
-// import { LoyaltyCodeGroupRepository } from '../loyalty-code/repositories/loyalty-code-group.repository';
-// import { LoyaltyCodeJobRepository } from '../loyalty-code/repositories/loyalty-code-job.repository';
-// import { LoyaltyCodeRepository } from '../loyalty-code/repositories/loyalty-code.repository';
-// import { NotiModule } from '../noti/noti.module';
-// import { NotiJobBatchRepository } from '../noti/repositories/noti-job-batch.repository';
-// import { NotiJobRepository } from '../noti/repositories/noti-job.repository';
-// import { NotiToUserRepository } from '../noti/repositories/noti-to-user.repository';
-// import { NotiRepository } from '../noti/repositories/noti.repository';
-// import { OrderModule } from '../order/order.module';
-// import { OrderLineItemRepository } from '../order/repositories/order-line-item.repository';
-// import { OrderRepository } from '../order/repositories/order.repository';
-// import { UserEvoucherRepository } from '../order/repositories/user-evoucher.repository';
-// import { UserHistoryPointRepository } from '../point/repositories/user-history-point.repository';
-// import { ProductToVariantRepository } from '../product/repositories/product-to-variant.repository';
-// import { ProductVariantRepository } from '../product/repositories/product-variant.repository';
-// import { ProductRepository } from '../product/repositories/product.repository';
-// import { ProvinceModule } from '../province/province.module';
-// import { ReferralModule } from '../referral/referral.module';
-// import { StatisticModule } from '../statistic/statistic.module';
-// import { StoreModule } from '../store/store.module';
-// import { SurveyModule } from '../survey/survey.module';
-// import { SecretRepository } from '../system-config/repositories/secret.repository';
-// import { UserFeedbackModule } from '../user-feedback/user-feedback.module';
-import { CreateLoyaltyCodeJobProcessor } from './processors/create-loyalty-code-job.processor';
-// import { ExportProcessor } from './processors/export.processor';
-import { GamePlayTimeExpiryProcessor } from './processors/game-play-time-expiry.processor';
 import { ImportProcessor } from './processors/import.processor';
-import { NotiJobBatchProcessor } from './processors/noti-job-batch.processor';
-import { NotiJobProcessor } from './processors/noti-job.processor';
-// import { OutboxMessageProcessor } from './processors/outbox-message.processor';
-import { UpdateLoyaltyCodeGroupProcessor } from './processors/update-loyalty-code-group.processor';
-import { UserEvoucherProcessor } from './processors/user-evoucher.processor';
 
 @Module({
   imports: [
@@ -103,38 +55,7 @@ import { UserEvoucherProcessor } from './processors/user-evoucher.processor';
         return addTransactionalDataSource(dataSource);
       },
     }),
-    TypeOrmCustomModule.forFeature([
-      // RequestExportRepository,
-      // RequestImportRepository,
-      // NotiRepository,
-      // SecretRepository,
-      // OutboxMessageRepository,
-      // CustomerRepository,
-      // OrderRepository,
-      // OrderLineItemRepository,
-      // ProductRepository,
-      // GameWinHistoryRepository,
-      // UserHistoryPointRepository,
-      // NotiToUserRepository,
-      UserRepository,
-      // NotiJobRepository,
-      // NotiJobBatchRepository,
-      // LoyaltyCodeJobRepository,
-      // LoyaltyCodeRepository,
-      // UserEvoucherRepository,
-      // MerchantRepository,
-      // LoyaltyCodeGiftGameRepository,
-      // LoyaltyCodeGiftProductRepository,
-      // GameRepository,
-      // GameTypeRepository,
-      // ProductVariantRepository,
-      // ProductToVariantRepository,
-      // UserCreditRepository,
-      // UserHistoryCreditRepository,
-      FileRepository,
-      // LoyaltyCodeGroupRepository,
-      // GamePlayTimeRepository,
-    ]),
+    TypeOrmCustomModule.forFeature([UserRepository, FileRepository]),
     I18nModule.forRoot({
       fallbackLanguage: 'vi',
       loaderOptions: { path: path.join(__dirname, '..', 'i18n'), watch: true },
@@ -148,33 +69,11 @@ import { UserEvoucherProcessor } from './processors/user-evoucher.processor';
     ThrottlerModule.forRoot({ ttl: 60, limit: 10 }),
     HttpModule,
 
-    // CaslModule,
     AuthModule,
-    // SurveyModule,
-    // ReferralModule,
-    // NotiModule,
-    // OrderModule,
-    // StoreModule,
-    // GameModule,
-    // UserFeedbackModule,
-    // StatisticModule,
-    // ProvinceModule,
-    // ExternalModule,
     HealthModule,
     FileModule,
-    // LoyaltyCodeModule,
   ],
-  providers: [
-    // ExportProcessor,
-    ImportProcessor,
-    // OutboxMessageProcessor,
-    NotiJobProcessor,
-    NotiJobBatchProcessor,
-    UpdateLoyaltyCodeGroupProcessor,
-    CreateLoyaltyCodeJobProcessor,
-    UserEvoucherProcessor,
-    GamePlayTimeExpiryProcessor,
-  ],
+  providers: [ImportProcessor],
 })
 export class WorkerModule implements OnModuleInit {
   constructor(private configService: ConfigService<AppConfig>) {}

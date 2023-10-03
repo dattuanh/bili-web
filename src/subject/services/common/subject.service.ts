@@ -28,11 +28,12 @@ export class SubjectService {
 
     const qb = this.subjectRepo
       .createQueryBuilder('subject')
-      .groupBy('subject.id')
       .orderBy('subject.priority', 'ASC')
-      .addOrderBy('subject.createdAt', 'DESC');
+      .addOrderBy('subject.createdAt', 'DESC')
+      .groupBy('subject.id')
+      .select('subject.id');
 
-    const { items, meta, links } = await paginate(qb, { limit, page });
+    const { items, meta } = await paginate(qb, { limit, page });
 
     const subjects = await this.subjectRepo.find({
       where: { id: In(items.map((item) => item.id)) },
@@ -60,13 +61,12 @@ export class SubjectService {
     const subjectsWithCorrectOrder = items.map((item) =>
       SubjectResDto.forCustomer({ data: subjectMap[item.id] }),
     );
-    return new Pagination(subjectsWithCorrectOrder, meta, links);
+    return new Pagination(subjectsWithCorrectOrder, meta);
   }
 
   async getOne(slug: string, dto: GetListNewsBySubjectReqDto) {
     const { limit, page } = dto;
 
-    console.log(slug);
     const qb = this.newsRepo
       .createQueryBuilder('news')
       .innerJoin('news.newsDetails', 'NewsDetails')
@@ -83,7 +83,6 @@ export class SubjectService {
 
     const { items, meta } = await paginate(qb, { limit, page });
 
-    console.log(items);
     const news = await Promise.all(
       items.map(async (item) => {
         const existedNews = await this.newsRepo.findOne({
