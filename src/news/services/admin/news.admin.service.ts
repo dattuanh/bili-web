@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { paginate, Pagination } from 'nestjs-typeorm-paginate';
+import { paginate } from 'nestjs-typeorm-paginate';
 import { In, Not } from 'typeorm';
 import { Transactional } from 'typeorm-transactional';
 import { User } from '../../../auth/entities/user.entity';
@@ -20,6 +20,7 @@ import {
 } from '../../dtos/admin/news.admin.req.dto';
 import { NewsResDto } from '../../dtos/common/res/news.admin.res.dto';
 import { NewsToSubject } from '../../entities/news-to-subject.entity';
+import { NewsDetailRepository } from '../../repositories/news-detail.repository';
 import { NewsToFileRepository } from '../../repositories/news-to-file.repository';
 import { NewsToSubjectRepository } from '../../repositories/news-to-subject.repository';
 import { NewsRepository } from '../../repositories/news.repository';
@@ -36,6 +37,7 @@ export class NewsAdminService {
     private newsDetailService: NewsDetailAdminService,
     private adminRepo: AdminRepository,
     private userRepo: UserRepository,
+    private NewsDetailRepo: NewsDetailRepository,
   ) {}
 
   @Transactional()
@@ -110,17 +112,55 @@ export class NewsAdminService {
     const { fromDate, limit, newsStatus, page, subjectIds, title, toDate } =
       dto;
 
-    const qb = this.newsRepo
+    const getNewsIds = await this.newsRepo
       .createQueryBuilder('news')
-      .innerJoin('news.newsDetails', 'newsDetails')
-      .innerJoin('news.newsToFile', 'newsToFile')
-      .innerJoin('newsToFile.thumbnail', 'thumbnail')
-      .innerJoin('news.newsToSubjects', 'newsToSubjects')
+      .select('news.id')
+      .orderBy('news.createdAt', 'DESC');
+
+    const getNewsDetail = this.NewsDetailRepo.createQueryBuilder('newsDetails')
+      .select(
+        `
+        string_agg(
+          jsonb_build_object(
+            'id', newsDetails.id,
+            'lang', newsDetails.lang,
+            'description', newsDetails.description,
+            'author', newsDetails.author, 
+            'content', newsDetails.content  
+          )::text, ','
+        )`,
+        'detail',
+      )
+      .where('newsDetails.news_id = news.id');
+
+    const getNewsToSubject = this.newsToSubjectRepo
+      .createQueryBuilder('newsToSubjects')
       .innerJoin('newsToSubjects.subject', 'subject')
       .innerJoin('subject.subjectDetails', 'subjectDetails')
-      .select('news.id')
-      .groupBy('news.id')
-      .orderBy('news.createdAt', 'DESC');
+      .select(
+        `
+        string_agg(
+          jsonb_build_object(
+            'id', subject.id,
+            'priority', subject.priority,
+            'subject_detail_id', subjectDetails.id,
+            'lang', subjectDetails.lang, 
+            'name', subjectDetails.name  
+          )::text, ','
+        )`,
+        'subjects',
+      )
+      .where('newsToSubjects.news_id = news.id');
+
+    const qb = this.newsRepo
+      .createQueryBuilder('news')
+      .innerJoin('news.newsToFile', 'newsToFile')
+      .innerJoin('newsToFile.thumbnail', 'thumbnail')
+      .innerJoin('(' + getNewsDetail.getQuery() + ')', 'newsDetail')
+      .innerJoin('(' + getNewsToSubject.getQuery() + ')', 'sub')
+
+      .select(['news.*', 'sub.subjects', 'newsDetail.detail', 'thumbnail.*'])
+      .where('news.id = :getNewsIds', { getNewsIds });
 
     if (title) {
       qb.andWhere('news.title ILIKE :title', { title: `%${title}%` });
@@ -138,36 +178,14 @@ export class NewsAdminService {
       qb.andWhere('news.createdAt <= :toDate', { toDate: toDate });
     }
 
-    if (subjectIds?.length) {
-      qb.andWhere('subject.id IN (:...subjectIds)', { subjectIds });
-    }
-
     const { items, meta } = await paginate(qb, { limit, page });
 
-    const news = await Promise.all(
-      items.map(async (item) => {
-        const existedNews = await this.newsRepo.findOne({
-          where: { id: item.id },
-          relations: {
-            newsDetails: true,
-            newsToFile: { thumbnail: true },
-          },
-        });
+    // console.log(getNewsDetail.getRawMany());
+    console.log(items);
 
-        const newsToSubject = await this.newsToSubjectRepo.find({
-          where: { newsId: existedNews.id },
-          relations: { subject: { subjectDetails: true } },
-        });
-        const subjects = newsToSubject.map((item) => item.subject);
+    // const ids = items.map((item) => item.id);
 
-        return NewsResDto.forAdmin({
-          data: existedNews,
-          subjects: subjects,
-        });
-      }),
-    );
-
-    return new Pagination(news, meta);
+    // return new Pagination(news, meta);
   }
 
   @Transactional()

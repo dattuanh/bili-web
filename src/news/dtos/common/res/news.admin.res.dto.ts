@@ -1,7 +1,9 @@
 import { BaseResponseDtoParams } from '../../../../common/dtos/base.res';
 import { FileResDto } from '../../../../file/dtos/common/res/file.res.dto';
 import { SubjectResDto } from '../../../../subject/dtos/common/res/subject.res.dto';
+import { SubjectDetail } from '../../../../subject/entities/subject-detail.entity';
 import { Subject } from '../../../../subject/entities/subject.entity';
+import { NewsDetail } from '../../../entities/news-detail.entity';
 import { News } from '../../../entities/news.entity';
 import { NewsStatus } from '../../../enums/news.enum';
 import { NewsDetailResDto } from './news-detail.res.dto';
@@ -29,10 +31,10 @@ export class NewsResDto {
 
   static forCustomer(params: NewsResDtoParams) {
     const { data, resOpts, subjects } = params;
-    
-    if (!data) return null; 
+
+    if (!data) return null;
     const result = new NewsResDto();
-    
+
     this.mapProperty(result, params);
 
     result.subject = subjects
@@ -52,6 +54,68 @@ export class NewsResDto {
     result.newsDetails = data.newsDetails
       ?.map((NewsDetail) => {
         return NewsDetailResDto.forCustomer({ data: NewsDetail });
+      })
+      .filter(Boolean);
+
+    return result;
+  }
+
+  static forAdminPagination(news: News, detailJson, subjectsJson) {
+    const result = new NewsResDto();
+
+    const detailArray = JSON.parse(`[${detailJson.detail}]`);
+    const subjectArray = JSON.parse(`[${subjectsJson.subjects}]`);
+
+    const subjects = subjectArray.map((subjectJson) => {
+      const subject = new Subject();
+      const subjectDetail = new SubjectDetail();
+
+      subject.id = subjectJson.id;
+      subject.priority = subjectJson.priority;
+
+      subjectDetail.id = subjectJson.subject_detail_id;
+      subjectDetail.lang = subjectJson.lang;
+      subjectDetail.name = subjectJson.name;
+
+      subject.subjectDetails = [subjectDetail];
+
+      return subject;
+    });
+
+    const newsDetails = detailArray.map((detail) => {
+      const newsDetail = new NewsDetail();
+
+      newsDetail.id = detail.id;
+      newsDetail.lang = detail.lang;
+      newsDetail.content = detail.content;
+      newsDetail.description = detail.description;
+      newsDetail.author = detail.author;
+
+      return newsDetail;
+    });
+
+    this.mapProperty(result, { data: news });
+
+    result.status = news.status;
+    result.createdAt = news.createdAt;
+
+    result.thumbnail = FileResDto.forAdmin({
+      data: news.newsToFile?.thumbnail,
+    });
+
+    result.subject = subjects
+      ?.map((item) =>
+        SubjectResDto.forAdmin({
+          data: item,
+        }),
+      )
+      .filter(Boolean);
+
+    result.newsDetails = newsDetails
+      ?.map((NewsDetail) => {
+        return NewsDetailResDto.forAdmin({
+          data: NewsDetail,
+        });
       })
       .filter(Boolean);
 
@@ -89,9 +153,8 @@ export class NewsResDto {
           resOpts,
         });
       })
-      .filter(Boolean); 
+      .filter(Boolean);
 
     return result;
   }
-
 }
