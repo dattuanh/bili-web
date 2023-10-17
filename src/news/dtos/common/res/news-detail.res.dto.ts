@@ -16,7 +16,7 @@ export class NewsDetailResDto {
   static mapProperty(dto: NewsDetailResDto, { data }: NewsDetailResDtoParams) {
     dto.id = data.id;
     dto.lang = data.lang;
-    // dto.content = data.content;
+    dto.content = data.content;
     dto.description = data.description;
     dto.author = data.author;
   }

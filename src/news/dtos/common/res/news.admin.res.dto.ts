@@ -1,5 +1,6 @@
 import { BaseResponseDtoParams } from '../../../../common/dtos/base.res';
 import { FileResDto } from '../../../../file/dtos/common/res/file.res.dto';
+import { File } from '../../../../file/entities/file.entity';
 import { SubjectResDto } from '../../../../subject/dtos/common/res/subject.res.dto';
 import { SubjectDetail } from '../../../../subject/entities/subject-detail.entity';
 import { Subject } from '../../../../subject/entities/subject.entity';
@@ -35,6 +36,8 @@ export class NewsResDto {
     if (!data) return null;
     const result = new NewsResDto();
 
+    result.createdAt = data.createdAt;
+
     this.mapProperty(result, params);
 
     result.subject = subjects
@@ -60,11 +63,11 @@ export class NewsResDto {
     return result;
   }
 
-  static forAdminPagination(news: News, detailJson, subjectsJson) {
+  static forPagination(news, detailJson, subjectsJson) {
     const result = new NewsResDto();
 
-    const detailArray = JSON.parse(`[${detailJson.detail}]`);
-    const subjectArray = JSON.parse(`[${subjectsJson.subjects}]`);
+    const detailArray = JSON.parse(`[${detailJson}]`);
+    const subjectArray = JSON.parse(`[${subjectsJson}]`);
 
     const subjects = subjectArray.map((subjectJson) => {
       const subject = new Subject();
@@ -94,13 +97,21 @@ export class NewsResDto {
       return newsDetail;
     });
 
+    const fileDetail = new File();
+
+    fileDetail.id = news.thumbid;
+    fileDetail.key = news.thumbkey;
+    fileDetail.type = news.thumbtype;
+    fileDetail.size = news.thumbsize;
+    fileDetail.uploaderId = news.thumbuploader;
+
     this.mapProperty(result, { data: news });
 
     result.status = news.status;
     result.createdAt = news.createdAt;
 
     result.thumbnail = FileResDto.forAdmin({
-      data: news.newsToFile?.thumbnail,
+      data: fileDetail,
     });
 
     result.subject = subjects

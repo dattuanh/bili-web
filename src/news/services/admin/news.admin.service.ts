@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { paginate } from 'nestjs-typeorm-paginate';
+import { Pagination, paginate } from 'nestjs-typeorm-paginate';
 import { In, Not } from 'typeorm';
 import { Transactional } from 'typeorm-transactional';
 import { User } from '../../../auth/entities/user.entity';
@@ -112,55 +112,17 @@ export class NewsAdminService {
     const { fromDate, limit, newsStatus, page, subjectIds, title, toDate } =
       dto;
 
-    const getNewsIds = await this.newsRepo
-      .createQueryBuilder('news')
-      .select('news.id')
-      .orderBy('news.createdAt', 'DESC');
-
-    const getNewsDetail = this.NewsDetailRepo.createQueryBuilder('newsDetails')
-      .select(
-        `
-        string_agg(
-          jsonb_build_object(
-            'id', newsDetails.id,
-            'lang', newsDetails.lang,
-            'description', newsDetails.description,
-            'author', newsDetails.author, 
-            'content', newsDetails.content  
-          )::text, ','
-        )`,
-        'detail',
-      )
-      .where('newsDetails.news_id = news.id');
-
-    const getNewsToSubject = this.newsToSubjectRepo
-      .createQueryBuilder('newsToSubjects')
-      .innerJoin('newsToSubjects.subject', 'subject')
-      .innerJoin('subject.subjectDetails', 'subjectDetails')
-      .select(
-        `
-        string_agg(
-          jsonb_build_object(
-            'id', subject.id,
-            'priority', subject.priority,
-            'subject_detail_id', subjectDetails.id,
-            'lang', subjectDetails.lang, 
-            'name', subjectDetails.name  
-          )::text, ','
-        )`,
-        'subjects',
-      )
-      .where('newsToSubjects.news_id = news.id');
-
     const qb = this.newsRepo
       .createQueryBuilder('news')
+      .innerJoin('news.newsDetails', 'newsDetails')
       .innerJoin('news.newsToFile', 'newsToFile')
       .innerJoin('newsToFile.thumbnail', 'thumbnail')
-      .innerJoin('(' + getNewsDetail.getQuery() + ')', 'newsDetail')
-      .innerJoin('(' + getNewsToSubject.getQuery() + ')', 'sub')
-
-      .select(['news.*', 'sub.subjects', 'newsDetail.detail', 'thumbnail.*'])
-      .where('news.id = :getNewsIds', { getNewsIds });
+      .innerJoin('news.newsToSubjects', 'newsToSubjects')
+      .innerJoin('newsToSubjects.subject', 'subject')
+      .innerJoin('subject.subjectDetails', 'subjectDetails')
+      .select('news.id')
+      .groupBy('news.id')
+      .orderBy('news.createdAt', 'DESC');
 
     if (title) {
       qb.andWhere('news.title ILIKE :title', { title: `%${title}%` });
@@ -178,14 +140,36 @@ export class NewsAdminService {
       qb.andWhere('news.createdAt <= :toDate', { toDate: toDate });
     }
 
+    if (subjectIds?.length) {
+      qb.andWhere('subject.id IN (:...subjectIds)', { subjectIds });
+    }
+
     const { items, meta } = await paginate(qb, { limit, page });
 
-    // console.log(getNewsDetail.getRawMany());
-    console.log(items);
+    const news = await Promise.all(
+      items.map(async (item) => {
+        const existedNews = await this.newsRepo.findOne({
+          where: { id: item.id },
+          relations: {
+            newsDetails: true,
+            newsToFile: { thumbnail: true },
+          },
+        });
 
-    // const ids = items.map((item) => item.id);
+        const newsToSubject = await this.newsToSubjectRepo.find({
+          where: { newsId: existedNews.id },
+          relations: { subject: { subjectDetails: true } },
+        });
+        const subjects = newsToSubject.map((item) => item.subject);
 
-    // return new Pagination(news, meta);
+        return NewsResDto.forAdmin({
+          data: existedNews,
+          subjects: subjects,
+        });
+      }),
+    );
+
+    return new Pagination(news, meta);
   }
 
   @Transactional()

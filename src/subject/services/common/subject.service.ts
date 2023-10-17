@@ -1,16 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { paginate, Pagination } from 'nestjs-typeorm-paginate';
-import { In } from 'typeorm';
-import { NewsResDto } from '../../../news/dtos/common/res/news.admin.res.dto';
-import { NewsStatus } from '../../../news/enums/news.enum';
+import { dataSource } from '../../../../data-source';
+import { Language } from '../../../common/enums/lang.enum';
 import { NewsToSubjectRepository } from '../../../news/repositories/news-to-subject.repository';
 import { NewsRepository } from '../../../news/repositories/news.repository';
-import {
-  GetListNewsBySubjectReqDto,
-  GetListSubjectReqDto,
-} from '../../dtos/common/req/subject.req.dto';
+import { GetListSubjectReqDto } from '../../dtos/common/req/subject.req.dto';
 import { SubjectResDto } from '../../dtos/common/res/subject.res.dto';
-import { Subject } from '../../entities/subject.entity';
 import { SubjectDetailRepository } from '../../repositories/subject-detail.repository';
 import { SubjectRepository } from '../../repositories/subject.repository';
 
@@ -23,90 +17,106 @@ export class SubjectService {
     private newsToSubjectRepo: NewsToSubjectRepository,
   ) {}
 
-  async getList(dto: GetListSubjectReqDto) {
-    const { limit, page, newsCountPerSubject } = dto;
+  async getListCommonTable(dto: GetListSubjectReqDto) {
+    const { numberOfSubject, newsCountPerSubject } = dto;
+    const subjectPriority = 1;
 
-    const qb = this.subjectRepo
+    const subject_cte = this.subjectRepo
       .createQueryBuilder('subject')
-      .orderBy('subject.priority', 'ASC')
-      .addOrderBy('subject.createdAt', 'DESC')
-      .groupBy('subject.id')
-      .select('subject.id');
+      .innerJoinAndSelect('subject.subjectDetails', 'subject_detail')
+      .where('subject.priority = :numPriority', {
+        numPriority: subjectPriority,
+      })
+      .andWhere('subject_detail.lang = :language', { language: Language.VN })
+      .orderBy('subject.createdAt', 'DESC')
+      .limit(numberOfSubject);
 
-    const { items, meta } = await paginate(qb, { limit, page });
+    const news_cte = this.newsRepo
+      .createQueryBuilder('news')
+      .select([
+        'ROW_NUMBER() OVER (PARTITION BY news_to_subject.subject_id) AS rownum',
+        '*',
+      ])
+      .innerJoinAndSelect('news.newsDetails', 'news_detail')
+      .innerJoinAndSelect('news.newsToFile', 'news_to_file')
+      .innerJoinAndSelect('news_to_file.thumbnail', 'file')
+      .innerJoinAndSelect('news.newsToSubjects', 'news_to_subject')
+      .innerJoinAndSelect(
+        'subject_cte',
+        'subject_cte',
+        'subject_cte.subject_id = news_to_subject.subject_id',
+      )
+      .where('news_detail.lang = :language', { language: Language.VN });
 
-    const subjects = await this.subjectRepo.find({
-      where: { id: In(items.map((item) => item.id)) },
-      relations: { subjectDetails: true },
-    });
+    const qb = await dataSource
+      .createQueryBuilder()
+      .from('news_cte', 'news_cte')
+      .addCommonTableExpression(subject_cte, 'subject_cte')
+      .addCommonTableExpression(news_cte, 'news_cte')
+      .where('news_cte.rownum <= :numOfNews', {
+        numOfNews: newsCountPerSubject,
+      })
+      .getRawMany();
 
-    const subjectMap: Record<number, Subject> = {};
+    // return qb.getQuery();
 
-    const subjectPromises = subjects.map(async (subject) => {
-      const newsToSubjects = await this.newsToSubjectRepo.find({
-        where: { subjectId: subject.id, news: { status: NewsStatus.ACTIVE } },
-        relations: {
-          news: { newsToFile: { thumbnail: true }, newsDetails: true },
-        },
-        take: newsCountPerSubject,
-        order: { createdAt: 'DESC' },
-      });
-      subject.newsToSubjects = newsToSubjects;
-      subjectMap[subject.id] = subject;
-    });
+    const subjectsWithCorrectOrder = SubjectResDto.forCustomer(qb, qb.length);
 
-    // Chạy tất cả các promise truy vấn cùng một lúc bằng Promise.all
-    await Promise.all(subjectPromises);
-
-    const subjectsWithCorrectOrder = items.map((item) =>
-      SubjectResDto.forCustomer({ data: subjectMap[item.id] }),
-    );
-    return new Pagination(subjectsWithCorrectOrder, meta);
+    return subjectsWithCorrectOrder;
   }
 
-  async getOne(slug: string, dto: GetListNewsBySubjectReqDto) {
-    const { limit, page } = dto;
+  async getListCommonTableVer2(dto: GetListSubjectReqDto) {
+    const { numberOfSubject, newsCountPerSubject } = dto;
+    const subjectPriority = 1;
 
-    const qb = this.newsRepo
+    const subject_cte = this.subjectRepo
+      .createQueryBuilder('subject')
+      .innerJoinAndSelect('subject.subjectDetails', 'subject_detail')
+      .where('subject.priority = :numPriority', {
+        numPriority: subjectPriority,
+      })
+      .andWhere('subject_detail.lang = :language', { language: Language.VN })
+      .orderBy('subject.createdAt', 'DESC')
+      .limit(numberOfSubject);
+
+    const news_subquery = this.newsRepo
       .createQueryBuilder('news')
-      .innerJoin('news.newsDetails', 'NewsDetails')
-      .innerJoin('news.newsToFile', 'newsToFile')
-      .innerJoin('newsToFile.thumbnail', 'thumbnail')
-      .innerJoin('news.newsToSubjects', 'newsToSubjects')
-      .innerJoin('newsToSubjects.subject', 'subject')
-      .innerJoin('subject.subjectDetails', 'subjectDetails')
-      .where('news.status = :status', { status: NewsStatus.ACTIVE })
-      .andWhere('subjectDetails.slug = :slug', { slug })
-      .select('news.id')
-      .groupBy('news.id')
-      .orderBy('news.createdAt', 'DESC');
+      .innerJoinAndSelect('news.newsToSubjects', 'news_to_subject')
+      .where('news_to_subject.subject_id = subject_cte.subject_id')
+      .orderBy('news.createdAt', 'DESC')
+      .limit(newsCountPerSubject)
+      .getQuery();
 
-    const { items, meta } = await paginate(qb, { limit, page });
+    const qb = await dataSource
+      .createQueryBuilder()
+      .select(['subject_cte.*'])
+      .from('subject_cte', 'subject_cte')
+      .addCommonTableExpression(subject_cte, 'subject_cte')
+      .innerJoinAndSelect(
+        (query) => {
+          query.getQuery = () => `LATERAL (${news_subquery})`;
+          return query;
+        },
+        'getNewsForSubject',
+        'true',
+      )
+      .innerJoinAndSelect(
+        'news_detail',
+        'news_detail',
+        'news_detail.news_id = "getNewsForSubject".news_id',
+      )
+      .innerJoinAndSelect(
+        'news_to_file',
+        'news_to_file',
+        'news_to_file.news_id = "getNewsForSubject".news_id',
+      )
+      .innerJoinAndSelect('news_to_file.thumbnail', 'file')
+      .andWhere('news_detail.lang = :language', { language: Language.VN })
+      .orderBy('subject_cte.subject_id')
+      .getRawMany();
 
-    const news = await Promise.all(
-      items.map(async (item) => {
-        const existedNews = await this.newsRepo.findOne({
-          where: { id: item.id },
-          relations: {
-            newsDetails: true,
-            newsToFile: { thumbnail: true },
-          },
-        });
+    const subjectsWithCorrectOrder = SubjectResDto.forCustomer(qb, qb.length);
 
-        const newsToSubject = await this.newsToSubjectRepo.find({
-          where: { newsId: existedNews.id },
-          relations: { subject: { subjectDetails: true } },
-        });
-
-        const subjects = newsToSubject.map((item) => item.subject);
-
-        return NewsResDto.forCustomer({
-          data: existedNews,
-          subjects: subjects,
-        });
-      }),
-    );
-
-    return new Pagination(news, meta);
+    return subjectsWithCorrectOrder;
   }
 }
