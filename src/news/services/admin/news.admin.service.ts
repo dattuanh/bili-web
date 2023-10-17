@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { paginate, Pagination } from 'nestjs-typeorm-paginate';
+import { Pagination, paginate } from 'nestjs-typeorm-paginate';
 import { In, Not } from 'typeorm';
 import { Transactional } from 'typeorm-transactional';
 import { User } from '../../../auth/entities/user.entity';
@@ -20,6 +20,7 @@ import {
 } from '../../dtos/admin/news.admin.req.dto';
 import { NewsResDto } from '../../dtos/common/res/news.admin.res.dto';
 import { NewsToSubject } from '../../entities/news-to-subject.entity';
+import { NewsDetailRepository } from '../../repositories/news-detail.repository';
 import { NewsToFileRepository } from '../../repositories/news-to-file.repository';
 import { NewsToSubjectRepository } from '../../repositories/news-to-subject.repository';
 import { NewsRepository } from '../../repositories/news.repository';
@@ -36,6 +37,7 @@ export class NewsAdminService {
     private newsDetailService: NewsDetailAdminService,
     private adminRepo: AdminRepository,
     private userRepo: UserRepository,
+    private NewsDetailRepo: NewsDetailRepository,
   ) {}
 
   @Transactional()

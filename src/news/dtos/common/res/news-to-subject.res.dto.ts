@@ -9,6 +9,7 @@ export interface NewsToSubjectResDtoParams extends BaseResponseDtoParams {
 export class NewsToSubjectResDto {
   id: number;
   news: NewsResDto;
+
   static mapProperty(
     dto: NewsToSubjectResDto,
     { data }: NewsToSubjectResDtoParams,

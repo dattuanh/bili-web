@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
-import { GetListNewsReqDto } from '../../dtos/common/req/news.req.dto';
+import { GetListNewsBySubjectReqDto } from '../../../subject/dtos/common/req/subject.req.dto';
 import { NewsResDto } from '../../dtos/common/res/news.admin.res.dto';
 import { NewsStatus } from '../../enums/news.enum';
+import { NewsDetailRepository } from '../../repositories/news-detail.repository';
 import { NewsToSubjectRepository } from '../../repositories/news-to-subject.repository';
 import { NewsRepository } from '../../repositories/news.repository';
 
@@ -11,6 +12,7 @@ export class NewsService {
   constructor(
     private newsRepo: NewsRepository,
     private newsToSubjectRepo: NewsToSubjectRepository,
+    private NewsDetailRepo: NewsDetailRepository,
   ) {}
 
   async getOne(slug: string) {
@@ -36,61 +38,104 @@ export class NewsService {
     return NewsResDto.forCustomer({ data: news, subjects: subjects });
   }
 
-  async getAll(dto: GetListNewsReqDto) {
-    const { fromDate, limit, page, subjectIds, title, toDate, ids } = dto;
-    const qb = this.newsRepo
+  async getListNewsBySubjectSlug(
+    slug: string,
+    dto: GetListNewsBySubjectReqDto,
+  ) {
+    const { limit, page } = dto;
+
+    const paginateById = this.newsRepo
       .createQueryBuilder('news')
-      .innerJoin('news.newsDetails', 'newsDetails')
-      .innerJoin('news.newsToFile', 'newsToFile')
-      .innerJoin('newsToFile.thumbnail', 'thumbnail')
       .innerJoin('news.newsToSubjects', 'newsToSubjects')
       .innerJoin('newsToSubjects.subject', 'subject')
       .innerJoin('subject.subjectDetails', 'subjectDetails')
-      .where('news.status = :status', { status: NewsStatus.ACTIVE })
+      .where('subjectDetails.slug = :slug', { slug })
       .select('news.id')
-      .groupBy('news.id')
       .orderBy('news.createdAt', 'DESC');
 
-    if (title) {
-      qb.andWhere('news.title ILIKE :title', { title: `%${title}%` });
-    }
-    if (fromDate) {
-      qb.andWhere('news.createdAt >= :fromDate', { fromDate: fromDate });
-    }
-    if (toDate) {
-      qb.andWhere('news.createdAt <= :toDate', { toDate: toDate });
-    }
-    if (subjectIds) {
-      qb.andWhere('subject.id IN (:...subjectIds)', { subjectIds: subjectIds });
-    }
-    if (ids?.length) {
-      qb.andWhere('news.id IN (:...ids)', { ids });
-    }
+    const { items, meta } = await paginate(paginateById, { limit, page });
 
-    const { items, meta } = await paginate(qb, { limit, page });
+    const ids = items.map((item) => item.id);
 
-    const news = await Promise.all(
-      items.map(async (item) => {
-        const existedNews = await this.newsRepo.findOne({
-          where: { id: item.id },
-          relations: {
-            newsDetails: true,
-            newsToFile: { thumbnail: true },
-          },
-        });
+    if (ids.length === 0) ids[0] = 0;
 
-        const newsToSubject = await this.newsToSubjectRepo.find({
-          where: { newsId: existedNews.id },
-          relations: { subject: { subjectDetails: true } },
-        });
-        const subjects = newsToSubject.map((item) => item.subject);
+    const newsDetailSubQuery = await this.NewsDetailRepo.createQueryBuilder(
+      'newsDetails',
+    )
+      .select('newsDetails.news_id')
+      .addSelect(
+        `
+        string_agg(
+          jsonb_build_object(
+            'id', newsDetails.id,
+            'lang', newsDetails.lang,
+            'description', newsDetails.description,
+            'author', newsDetails.author, 
+            'content', newsDetails.content  
+          )::text, ','
+        )`,
+        'detail',
+      )
+      .groupBy('newsDetails.news_id');
 
-        return NewsResDto.forCustomer({
-          data: existedNews,
-          subjects: subjects,
-        });
-      }),
-    );
+    const getNewsToSubject = await this.newsToSubjectRepo
+      .createQueryBuilder('newsToSubjects')
+      .innerJoin('newsToSubjects.subject', 'subject')
+      .innerJoin('subject.subjectDetails', 'subjectDetails')
+      .select('newsToSubjects.news_id')
+      .addSelect(
+        `
+        string_agg(
+          jsonb_build_object(
+            'id', subject.id,
+            'priority', subject.priority,
+            'subject_detail_id', subjectDetails.id,
+            'lang', subjectDetails.lang, 
+            'name', subjectDetails.name  
+          )::text, ','
+        )`,
+        'subjects',
+      )
+      .groupBy('newsToSubjects.news_id');
+
+    const qb = await this.newsRepo
+      .createQueryBuilder('news')
+      .innerJoin('news.newsToFile', 'newsToFile')
+      .innerJoin('newsToFile.thumbnail', 'thumbnail')
+      .innerJoin(
+        '(' + newsDetailSubQuery.getQuery() + ')',
+        'newsDetail',
+        'news.id = "newsDetail".news_id',
+      )
+      .innerJoin(
+        '(' + getNewsToSubject.getQuery() + ')',
+        'sub',
+        'news.id = sub.news_id',
+      )
+      .select([
+        'news.*',
+        'subjects',
+        'detail',
+        'thumbnail.id as thumbid',
+        'thumbnail.key as thumbkey',
+        'thumbnail.type as thumbtype',
+        'thumbnail.size as thumbsize',
+        'thumbnail.uploader_id as thumbuploader',
+      ])
+      .where('news.status = :status', { status: NewsStatus.ACTIVE })
+      .andWhere('news.id IN (:...ids)', { ids })
+      .getRawMany();
+
+    const news = [];
+
+    for (let i = 0; i < ids.length; i++) {
+      const newsItem = NewsResDto.forPagination(
+        qb[i],
+        qb[i].detail,
+        qb[i].subjects,
+      );
+      news.push(newsItem);
+    }
 
     return new Pagination(news, meta);
   }
