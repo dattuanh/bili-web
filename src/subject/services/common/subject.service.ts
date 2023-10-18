@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { dataSource } from '../../../../data-source';
 import { Language } from '../../../common/enums/lang.enum';
+import { NewsStatus } from '../../../news/enums/news.enum';
 import { NewsToSubjectRepository } from '../../../news/repositories/news-to-subject.repository';
 import { NewsRepository } from '../../../news/repositories/news.repository';
 import { GetListSubjectReqDto } from '../../dtos/common/req/subject.req.dto';
@@ -27,7 +28,7 @@ export class SubjectService {
       .where('subject.priority = :numPriority', {
         numPriority: subjectPriority,
       })
-      .andWhere('subject_detail.lang = :language', { language: Language.VN })
+      .andWhere('subject_detail.lang = :language', { language: Language.EN })
       .orderBy('subject.createdAt', 'DESC')
       .limit(numberOfSubject);
 
@@ -46,7 +47,8 @@ export class SubjectService {
         'subject_cte',
         'subject_cte.subject_id = news_to_subject.subject_id',
       )
-      .where('news_detail.lang = :language', { language: Language.VN });
+      .where('news_detail.lang = :language', { language: Language.EN })
+      .andWhere('news.status = :status', { status: NewsStatus.ACTIVE });
 
     const qb = await dataSource
       .createQueryBuilder()
@@ -75,7 +77,7 @@ export class SubjectService {
       .where('subject.priority = :numPriority', {
         numPriority: subjectPriority,
       })
-      .andWhere('subject_detail.lang = :language', { language: Language.VN })
+      .andWhere('subject_detail.lang = :language', { language: Language.EN })
       .orderBy('subject.createdAt', 'DESC')
       .limit(numberOfSubject);
 
@@ -83,6 +85,7 @@ export class SubjectService {
       .createQueryBuilder('news')
       .innerJoinAndSelect('news.newsToSubjects', 'news_to_subject')
       .where('news_to_subject.subject_id = subject_cte.subject_id')
+      .andWhere('news.status = :status', { status: NewsStatus.ACTIVE })
       .orderBy('news.createdAt', 'DESC')
       .limit(newsCountPerSubject)
       .getQuery();
@@ -111,9 +114,11 @@ export class SubjectService {
         'news_to_file.news_id = "getNewsForSubject".news_id',
       )
       .innerJoinAndSelect('news_to_file.thumbnail', 'file')
-      .andWhere('news_detail.lang = :language', { language: Language.VN })
+      .andWhere('news_detail.lang = :language', { language: Language.EN })
       .orderBy('subject_cte.subject_id')
       .getRawMany();
+
+    // return qb.getQueryAndParameters();
 
     const subjectsWithCorrectOrder = SubjectResDto.forCustomer(qb, qb.length);
 
