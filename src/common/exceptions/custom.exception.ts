@@ -35,11 +35,11 @@ export class NotFoundExc extends CustomException {
   }
 }
 
-export class AddPointBaseExc extends CustomException {
-  constructor(params: NonFunctionProperties<Omit<CustomException, 'status'>>) {
-    super({ ...params, status: 400 });
-  }
-}
+// export class AddPointBaseExc extends CustomException {
+//   constructor(params: NonFunctionProperties<Omit<CustomException, 'status'>>) {
+//     super({ ...params, status: 400 });
+//   }
+// }
 
 export class UnauthorizedExc extends CustomException {
   constructor(params: NonFunctionProperties<Omit<CustomException, 'status'>>) {

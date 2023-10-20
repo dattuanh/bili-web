@@ -2,11 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { dataSource } from '../../../../data-source';
 import { Language } from '../../../common/enums/lang.enum';
 import { NewsStatus } from '../../../news/enums/news.enum';
-import { NewsToSubjectRepository } from '../../../news/repositories/news-to-subject.repository';
 import { NewsRepository } from '../../../news/repositories/news.repository';
 import { GetListSubjectReqDto } from '../../dtos/common/req/subject.req.dto';
 import { SubjectResDto } from '../../dtos/common/res/subject.res.dto';
-import { SubjectDetailRepository } from '../../repositories/subject-detail.repository';
 import { SubjectRepository } from '../../repositories/subject.repository';
 
 @Injectable()
@@ -14,8 +12,6 @@ export class SubjectService {
   constructor(
     private readonly subjectRepo: SubjectRepository,
     private newsRepo: NewsRepository,
-    private subjectDetailRepo: SubjectDetailRepository,
-    private newsToSubjectRepo: NewsToSubjectRepository,
   ) {}
 
   async getListCommonTable(dto: GetListSubjectReqDto) {
