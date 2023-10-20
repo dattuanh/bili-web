@@ -3,7 +3,6 @@ import { FileType, SupportFileType } from '../enums/file.enum';
 export const ABILITY_METADATA_KEY = 'ability';
 export enum PrefixType {
   ADMIN = 'admin',
-  MERCHANT = 'merchant',
   CUSTOMER = 'customer',
   TEST = 'test',
   EXTERNAL = 'external',

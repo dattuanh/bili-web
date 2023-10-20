@@ -1,5 +1,4 @@
 import { HttpModule } from '@nestjs/axios';
-import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 import { forwardRef } from '@nestjs/common/utils';
 import { ConfigService } from '@nestjs/config';
@@ -7,7 +6,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmCustomModule } from 'utility/dist';
 import { AppConfig } from '../common/config/app.config';
-import { bullQueues } from '../common/config/bull.config';
 import { FileModule } from '../file/file.module';
 import { FileRepository } from '../file/repositories/file.repository';
 import { UtilsModule } from '../utils/utils.module';
@@ -35,7 +33,6 @@ import { AuthenExternalStrategy } from './strategies/jwt-authen.external.strateg
         },
       }),
     }),
-    BullModule.registerQueue(...bullQueues),
     TypeOrmCustomModule.forFeature([
       UserRepository,
       AdminRepository,

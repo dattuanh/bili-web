@@ -1,7 +1,6 @@
-import { BullModuleOptions, SharedBullAsyncConfiguration } from '@nestjs/bull';
+import { SharedBullAsyncConfiguration } from '@nestjs/bull';
 import { ConfigService } from '@nestjs/config';
 import Redis, { RedisOptions } from 'ioredis';
-import { QueueName } from '../../worker/enums/worker.enum';
 import { AppEnvironment } from '../enums/app.enum';
 import appConfig, { AppConfig } from './app.config';
 
@@ -64,78 +63,3 @@ export const bullOptions: SharedBullAsyncConfiguration = {
     };
   },
 };
-
-export const bullQueues: BullModuleOptions[] = [
-  {
-    name: QueueName.EXPORT,
-    prefix: `{${QueueName.EXPORT}}`,
-    defaultJobOptions: {
-      attempts: 3,
-      backoff: { type: 'exponential', delay: 5000 },
-    },
-  },
-  {
-    name: QueueName.IMPORT,
-    prefix: `{${QueueName.IMPORT}}`,
-    defaultJobOptions: {
-      attempts: 3,
-      backoff: { type: 'exponential', delay: 5000 },
-    },
-  },
-  {
-    name: QueueName.OUTBOX_MESSAGE,
-    prefix: `{${QueueName.OUTBOX_MESSAGE}}`,
-    defaultJobOptions: {
-      attempts: 3,
-      backoff: { type: 'exponential', delay: 5000 },
-    },
-  },
-  {
-    name: QueueName.NOTI_JOB,
-    prefix: `{${QueueName.NOTI_JOB}}`,
-    defaultJobOptions: {
-      attempts: 3,
-      backoff: { type: 'exponential', delay: 5000 },
-    },
-  },
-  {
-    name: QueueName.NOTI_JOB_BATCH,
-    prefix: `{${QueueName.NOTI_JOB_BATCH}}`,
-    defaultJobOptions: {
-      attempts: 3,
-      backoff: { type: 'exponential', delay: 5000 },
-    },
-  },
-  {
-    name: QueueName.CREATE_LOYALTY_CODE_JOB,
-    prefix: `{${QueueName.CREATE_LOYALTY_CODE_JOB}}`,
-    defaultJobOptions: {
-      attempts: 3,
-      backoff: { type: 'exponential', delay: 5000 },
-    },
-  },
-  {
-    name: QueueName.UPDATE_LOYALTY_CODE_GROUP,
-    prefix: `{${QueueName.UPDATE_LOYALTY_CODE_GROUP}}`,
-    defaultJobOptions: {
-      attempts: 3,
-      backoff: { type: 'exponential', delay: 5000 },
-    },
-  },
-  {
-    name: QueueName.USER_EVOUCHER,
-    prefix: `{${QueueName.USER_EVOUCHER}}`,
-    defaultJobOptions: {
-      attempts: 3,
-      backoff: { type: 'exponential', delay: 5000 },
-    },
-  },
-  {
-    name: QueueName.GAME_PLAY_TIME_EXPIRY,
-    prefix: `{${QueueName.GAME_PLAY_TIME_EXPIRY}}`,
-    defaultJobOptions: {
-      attempts: 3,
-      backoff: { type: 'exponential', delay: 5000 },
-    },
-  },
-];

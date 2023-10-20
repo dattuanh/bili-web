@@ -1,6 +1,5 @@
 export enum StrategyName {
   ADMIN = 'jwt-authen-admin',
-  // JWT_CASL_ADMIN = 'jwt-casl-admin',
   EXTERNAL = 'EXTERNAL',
 }
 

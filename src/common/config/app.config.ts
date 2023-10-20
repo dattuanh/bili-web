@@ -7,8 +7,8 @@ dotenv.config();
 const appConfig = {
   environment: process.env.NODE_ENV,
   port: +process.env.PORT || 5000,
-  feMerchantBaseUrl: process.env.FE_MERCHANT_BASE_URL,
-  feCustomerBaseUrl: process.env.FE_CUSTOMER_BASE_URL,
+  // feMerchantBaseUrl: process.env.FE_MERCHANT_BASE_URL,
+  // feCustomerBaseUrl: process.env.FE_CUSTOMER_BASE_URL,
   databaseSecretKey: process.env.DATABASE_SECRET_KEY,
   cronSecret: process.env.CRON_SECRET,
 
@@ -25,15 +25,6 @@ const appConfig = {
     password: process.env.REDIS_PASSWORD,
     sentinelPassword: process.env.REDIS_SENTINEL_PASSWORD,
     redisGroupName: 'mymaster',
-  },
-
-  urBox: {
-    baseUrl: process.env.UR_BOX_BASE_URL,
-    paths: {
-      getListProduct: process.env.UR_BOX_GET_LIST_PRODUCT_PATH,
-      getDetailProduct: process.env.UR_BOX_GET_DETAIL_PRODUCT_PATH,
-      redeemProduct: process.env.UR_BOX_REDEEM_PRODUCT_PATH,
-    },
   },
 
   auth: {
@@ -69,39 +60,6 @@ const appConfig = {
     projectId: process.env.FIREBASE_PROJECT_ID,
   },
 
-  expressDelivery: {
-    baseUrl: process.env.GHN_BASE_URL,
-    createOrderUrl: process.env.GHN_CREATE_ORDER_URL,
-    token: process.env.GHN_TOKEN,
-    shopId: process.env.GHN_SHOP_ID,
-    clientId: process.env.GHN_CLIENT_ID,
-    getDistrictUrl: process.env.GHN_GET_DISTRICT,
-    getProvincesUrl: process.env.GHN_GET_PROVINCE,
-    getAvailbleServicesUrl: process.env.GHN_GET_AVAILABLE_SERVICE,
-    getShopUrl: process.env.GHN_GET_SHOP,
-  },
-
-  zalo: {
-    secretKey: process.env.ZALO_SECRET_KEY,
-    appId: process.env.ZALO_APP_ID,
-    refreshTokenUrl: process.env.ZALO_REFRESH_TOKEN_URL,
-
-    zns: {
-      url: {
-        listTemplate: process.env.ZALO_ZNS_LIST_TEMPLATE_URL,
-        detailTemplate: process.env.ZALO_ZNS_DETAIL_TEMPLATE_URL,
-        sendNoti: process.env.ZALO_ZNS_SEND_NOTI_URL,
-        getQuota: process.env.ZALO_ZNS_GET_QUOTA_URL,
-      },
-
-      templateId: {
-        sendOtp: process.env.ZALO_ZNS_SEND_OTP_TEMPLATE_ID,
-      },
-
-      defaultQuotaEachMerchant: process.env.DEFAULT_QUOTA_ZNS_EACH_MERCHANT,
-    },
-  },
-
   vietGuys: {
     baseUrl: process.env.VIET_GUYS_BASE_URL,
     cskhSmsUrl: process.env.VIET_GUYS_CSKH_SMS_URL,
@@ -127,8 +85,8 @@ export const appConfigValidationSchema = joi.object({
     .valid(...Object.values(AppEnvironment))
     .required(),
   PORT: joi.number().required(),
-  FE_MERCHANT_BASE_URL: joi.string().required(),
-  FE_CUSTOMER_BASE_URL: joi.string().required(),
+  // FE_MERCHANT_BASE_URL: joi.string().required(),
+  // FE_CUSTOMER_BASE_URL: joi.string().required(),
   CRON_SECRET: joi.string().required(),
 
   DATABASE_SECRET_KEY: joi.string().required(),
@@ -156,16 +114,6 @@ export const appConfigValidationSchema = joi.object({
   FIREBASE_PRIVATE_KEY: joi.string().required(),
   FIREBASE_CLIENT_EMAIL: joi.string().required(),
   FIREBASE_PROJECT_ID: joi.string().required(),
-
-  ZALO_SECRET_KEY: joi.string().required(),
-  ZALO_APP_ID: joi.string().required(),
-  ZALO_REFRESH_TOKEN_URL: joi.string().required(),
-  ZALO_ZNS_LIST_TEMPLATE_URL: joi.string().required(),
-  ZALO_ZNS_DETAIL_TEMPLATE_URL: joi.string().required(),
-  ZALO_ZNS_SEND_NOTI_URL: joi.string().required(),
-  ZALO_ZNS_GET_QUOTA_URL: joi.string().required(),
-  ZALO_ZNS_SEND_OTP_TEMPLATE_ID: joi.string().required(),
-  DEFAULT_QUOTA_ZNS_EACH_MERCHANT: joi.string().required(),
 
   SEND_GRID_KEY: joi.string().required(),
   SEND_GRID_SENDER_KEY: joi.string().required(),

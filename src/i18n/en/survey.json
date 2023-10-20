@@ -1,9 +1,0 @@
-{
-  "notFound": "Survey not found",
-  "simpleQuestionOnlyAcceptOneAnswer": "Câu hỏi đơn giản chỉ nhận 1 đáp án",
-  "notAnswerEnoughQuestion": "Không trả lời đủ câu hỏi",
-  "surveyIsAlreadyTaken": "Đã trả lời survey rồi",
-  "featureIsTurnOff": "Survey Feature is turn off",
-  "answerNotFound": "Answer not found",
-  "canNotUpdateSurveyPointIfAlreadyTaken": "Can not update survey point if it has been already taken"
-}
