@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { Language } from '../../../common/enums/lang.enum';
-import { GetListNewsBySubjectReqDto } from '../../../subject/dtos/common/req/subject.req.dto';
+import {
+  GetListNewsBySubjectReqDto,
+  GetNumberOfLatestNewsDto,
+} from '../../../subject/dtos/common/req/subject.req.dto';
 import { NewsResDto } from '../../dtos/common/res/news.admin.res.dto';
 import { NewsStatus } from '../../enums/news.enum';
 import { NewsDetailRepository } from '../../repositories/news-detail.repository';
@@ -94,5 +97,27 @@ export class NewsService {
     );
 
     return new Pagination(news, meta);
+  }
+
+  async getNumberOfLatestNews(num: GetNumberOfLatestNewsDto) {
+    const { numberOfNews } = num;
+
+    const qb = await this.newsRepo.find({
+      where: { newsDetails: { lang: Language.EN } },
+      relations: {
+        newsDetails: true,
+        newsToFile: { thumbnail: true },
+      },
+      order: { createdAt: 'DESC' },
+      take: numberOfNews,
+    });
+
+    const news = await Promise.all(
+      qb.map(async (item) => {
+        return NewsResDto.forCustomer({ data: item });
+      }),
+    );
+
+    return news;
   }
 }

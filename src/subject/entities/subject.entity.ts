@@ -4,10 +4,12 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../../auth/entities/user.entity';
 import { BaseEntity } from '../../common/entities/base.entity';
+import { File } from '../../file/entities/file.entity';
 import { NewsToSubject } from '../../news/entities/news-to-subject.entity';
 import { SubjectDetail } from './subject-detail.entity';
 
@@ -20,11 +22,12 @@ export class Subject extends BaseEntity {
   @JoinColumn()
   subjectDetails: SubjectDetail[];
 
-  @Column({ name: 'owner_id' })
-  ownerId: number;
-
   @Column({ nullable: true })
   priority: number;
+
+  // join owner
+  @Column({ name: 'owner_id' })
+  ownerId: number;
 
   @ManyToOne(() => User, (user) => user.subjects, { persistence: false })
   @JoinColumn({ name: 'owner_id' })
@@ -33,4 +36,13 @@ export class Subject extends BaseEntity {
 
   @OneToMany(() => NewsToSubject, (nb) => nb.subject, { persistence: false })
   newsToSubjects: NewsToSubject[];
+
+  // join file
+  @Column({ nullable: true })
+  thumbnailId: number;
+
+  @OneToOne(() => File, (file) => file.subject, { persistence: false })
+  @JoinColumn()
+  thumbnail: File;
+  //end join file
 }

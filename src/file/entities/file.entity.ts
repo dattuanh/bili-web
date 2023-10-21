@@ -4,7 +4,6 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -14,6 +13,7 @@ import { BaseEntityWithoutUpdate } from '../../common/entities/base.entity';
 import { ConstraintName } from '../../common/enums/constraint-name.enum';
 import { SupportFileType } from '../../common/enums/file.enum';
 import { NewsToFile } from '../../news/entities/news-to-file.entity';
+import { Subject } from '../../subject/entities/subject.entity';
 
 @Entity('file')
 @Check(
@@ -54,4 +54,7 @@ export class File extends BaseEntityWithoutUpdate {
 
   @OneToOne(() => NewsToFile, (news) => news.thumbnail, { persistence: false })
   newsToFile: NewsToFile;
+
+  @OneToOne(() => Subject, (sub) => sub.thumbnail, { persistence: false })
+  subject: Subject;
 }

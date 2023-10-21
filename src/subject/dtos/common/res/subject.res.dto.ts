@@ -1,4 +1,5 @@
 import { BaseResponseDtoParams } from '../../../../common/dtos/base.res';
+import { FileResDto } from '../../../../file/dtos/common/res/file.res.dto';
 import { File } from '../../../../file/entities/file.entity';
 import { NewsToSubjectResDto } from '../../../../news/dtos/common/res/news-to-subject.res.dto';
 import { NewsDetail } from '../../../../news/entities/news-detail.entity';
@@ -16,6 +17,7 @@ export interface SubjectResDtoParams extends BaseResponseDtoParams {
 export class SubjectResDto {
   id: number;
   priority: number;
+  thumbnail: FileResDto;
   subjectDetails: SubjectDetailResDto[];
   newsToSubject: NewsToSubjectResDto[];
 
@@ -115,6 +117,11 @@ export class SubjectResDto {
     const result = new SubjectResDto();
 
     this.mapProperty(result, params);
+
+    result.thumbnail = FileResDto.forCustomer({
+      data: data.thumbnail,
+      resOpts,
+    });
 
     result.subjectDetails = data.subjectDetails
       ?.map((subjectDetail) => {

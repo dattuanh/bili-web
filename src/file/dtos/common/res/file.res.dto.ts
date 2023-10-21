@@ -45,18 +45,6 @@ export class FileResDto {
     return result;
   }
 
-  static forMerchant(params: FileResDtoParams) {
-    const { data } = params;
-
-    const result = new FileResDto();
-    if (!data) return null;
-
-    this.mapProperty(result, params);
-
-    result.size = data.size;
-    return result;
-  }
-
   static forAdmin(params: FileResDtoParams) {
     const { data } = params;
 

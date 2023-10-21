@@ -29,17 +29,6 @@ export class PresignedUrlResDto {
     return result;
   }
 
-  static forMerchant(params: PresignedUrlResDtoParams) {
-    const { file } = params;
-
-    const result = new PresignedUrlResDto();
-
-    this.mapProperty(result, params);
-
-    result.file = FileResDto.forCustomer({ data: file });
-    return result;
-  }
-
   static forAdmin(params: PresignedUrlResDtoParams) {
     const { file } = params;
 
