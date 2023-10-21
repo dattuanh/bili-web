@@ -10,3 +10,8 @@ export class GetListSubjectReqDto {
 }
 
 export class GetListNewsBySubjectReqDto extends PaginationReqDto {}
+
+export class GetNumberOfLatestNewsDto {
+  @IsValidNumber()
+  numberOfNews: number;
+}

@@ -13,6 +13,9 @@ import {
 class SaveSubjectAdminReqDto {
   @IsValidNumber({ min: 1, required: false })
   priority?: number;
+
+  @IsValidNumber()
+  thumbnailId: number;
 }
 
 export class CreateSubjectAdminReqDto extends SaveSubjectAdminReqDto {

@@ -47,6 +47,7 @@ export class SubjectAdminService {
       where: { id: In(items.map((item) => item.id)) },
       relations: {
         subjectDetails: true,
+        thumbnail: true,
       },
     });
 
@@ -67,6 +68,7 @@ export class SubjectAdminService {
     const subject = await this.subjectRepo.findOneOrThrowNotFoundExc({
       where: { id: id },
       relations: {
+        thumbnail: true,
         subjectDetails: true,
         newsToSubjects: true,
       },
@@ -77,12 +79,13 @@ export class SubjectAdminService {
 
   @Transactional()
   async create(user: User, dto: CreateSubjectAdminReqDto) {
-    const { subjectDetails, priority } = dto;
+    const { subjectDetails, priority, thumbnailId } = dto;
 
     //create subject
     const subject = this.subjectRepo.create({
       owner: user,
       priority: priority,
+      thumbnailId: thumbnailId,
     });
 
     const createdSubject = await this.subjectRepo.save(subject);
@@ -99,7 +102,7 @@ export class SubjectAdminService {
 
   @Transactional()
   async update(updateSubjectDto: UpdateSubjectAdminReqDto) {
-    const { id, priority } = updateSubjectDto;
+    const { id, priority, thumbnailId } = updateSubjectDto;
 
     const existedSubject = await this.subjectRepo.findOneOrThrowNotFoundExc({
       where: { id },
@@ -107,7 +110,8 @@ export class SubjectAdminService {
     });
 
     //Update subject
-    if (priority) await this.subjectRepo.update({ id }, { priority });
+    if (priority)
+      await this.subjectRepo.update({ id }, { priority, thumbnailId });
 
     //Check Subject Details
     if (

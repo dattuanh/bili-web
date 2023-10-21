@@ -54,6 +54,8 @@ export class SubjectService {
       .where('news_cte.rownum <= :numOfNews', {
         numOfNews: newsCountPerSubject,
       })
+      .orderBy('news_cte.news_to_subject_subject_id', 'DESC')
+      .addOrderBy('news_cte.news_to_subject_news_id', 'DESC')
       .getRawMany();
 
     // return qb.getQuery();
